@@ -1,7 +1,7 @@
 # MDS-SDK-GO-PUBLIC
 
-This repo holds generated go sdks for MDS API, including v1 mds for on-prem, and v2alpha1 `role` endpoints which is not supposed to be updated. Each version of the v1 MDS API is held in a versioned directory and are updated independently. 
-See below on how to update a version of the mds sdk.
+This repository holds generated Go SDKs for the MDS API, including v1 MDS for on-prem. Each version of the v1 MDS API is held in a versioned directory and are updated independently. Warning: the v2alpha1 endpoints are already deprecated, and should not be used under any circumstances.
+See below on how to update a version of the MDS SDK.
 
 
 ## Updating mds-sdk-go after changing an API spec
