@@ -1,0 +1,3162 @@
+openapi: 3.0.0
+info:
+  description: |
+    ## Confluent Metadata API - Swagger UI
+    ---
+    This tool (SwaggerUI) and the Open API spec file are provided _for development / test
+    purposes only_:
+
+    - **Do _not_ enable in Production.**
+    - **This tool only works with HTTP.**
+
+    ### Authenticating
+    Authentication is performed by HTTP Basic Auth or by presenting a bearer token.
+    In this UI, click **Authorize** to enter credentials.
+
+    To get a bearer token, first call the authenticate endpoint with basic auth, and then extract the
+    auth_token part of the request, and pass that as the bearer token.
+
+    ### Access Restrictions - Who can call what?
+
+    Some endpoints can be called by any authenticated user, while others can only be called by "admins".
+    Additionally, many of the endpoints in the API involve two users: the user who is calling the
+    endpoint (the "calling" principal) and the user that the API call is about (the "target" principal).
+
+    Example: User "alice", who has the UserAdmin role, and is identifed by her basic auth credentials or a
+    bearer token, calls the CRUD endpoint to modify role bindings about user "bob".
+
+    To document what access restrictions each endpoint has, use the following legend, which
+    lists access in order from least restrictive to most restrictive:
+
+    *  **LDAP**: Any authenticated LDAP user
+    *  **Admins+User**: Admins or the user requesting information about themself
+    *  **Admins+ResourceOwners**: Admins or users with ResourceOwner role
+    *  **Admins+AclUsers**: Admins or the user having the required ACL permissions
+    *  **Admins**: Admins only, which can be UserAdmin, SystemAdmin, broker super.user, or SecurityAdmin as "Read"
+
+    ### Overview of Responses
+
+    **Valid**
+
+    * 200 - Successful call with a return body.
+    * 204 - Sucessuful call with **no** return body.
+
+    **Errors**
+
+    * 400 - Invalid request.  JSON parsing error, or otherwise incorrect request.
+    * 401 - Not Authenticated.  You need to pass valid basic auth credentials or a user bearer token.
+    * 403 - Not Authorized.  Valid request, but you aren't authorized to perform the requested action.
+    * 404 - Invalid URL.  If you get this error from the authenticate endpoint, it means bearer token authentication needs to be enabled in the configuration.
+        * ``confluent.metadata.server.authentication.method=BEARER``
+    * 405 - Method Not Allowed.  Using the wrong HTTP method on a valid endpoint (for example, GET instead of POST).
+    * 409 - Conflict.  Adding a new resource or updating an existing resource which would result in a conflict with existing state.
+        * can be thrown by Audit Logs and Cluster Registry APIs
+    * 415 - Invalid Content Type.  Usually, not sending "application/json" as request body header.
+    * 500 - Server Error.
+
+    ### Special Resource Types
+
+    Cluster and KsqlCluster are special ResourceTypes because they grant resource-scoped roles
+    like ResourceOwner and DeveloperManage limited access to cluster-level operations (for example,
+    Describe Configs on Kafka clusters).
+    These special resource types only accept LITERAL patterns with the values "kafka-cluster" and
+    "kql-cluster", respectively.
+
+    ### Private RBAC UI Endpoints
+
+    These endpoints were developed specifically to power the Confluent Control Center UI.
+    As such, they only focus on those use cases and have only been tested in the context of Confluent Control Center.
+    These endpoints have not been tested, nor has their usability been evaluated with respect to manual API calls.
+  title: MDS API
+  version: "1.0"
+  x-api-id: 9a0c4222-9190-4816-b872-1a9cf002afab
+  x-audience: external-public
+servers:
+- url: /
+security:
+- basicAuth: []
+- bearerAuth: []
+tags:
+- name: Tokens and Authentication
+- description: |-
+    For components to find service nodes and call Authorize.
+    KSQL, Schema Registry, Connect would use these methods to enforce role permissions on their specfic resources.
+  name: Authorization
+- description: Metadata Service operational information.
+  name: Metadata Service Operations
+- description: Basic information about the roles that the system defines.
+  name: RBAC - Role Definitions
+- description: CRUD rolebindings for users and groups.
+  name: RBAC - RoleBinding CRUD
+- description: Endpoints that roll up rolebinding information in various ways.
+  name: RBAC - RoleBinding Summaries
+- description: Endpoints to create, delete, and list Kafka ACLs.
+  name: Kafka ACL Management
+- description: Tracking and naming clusters.
+  name: Cluster Registry
+- description: |
+    Configuration of what events get logged, and where those audit log events are sent.
+  name: Audit Log Configuration
+- description: Identify which clusters a user has access to.
+  name: Private RBAC UI - Cluster Visibility
+- description: Endpoints that power the My Rolebindings UI in Confluent Control Center.
+  name: Private RBAC UI - My RoleBindings
+- description: Endpoints that power the Manage RoleBindings UI in Confluent Control
+    Center.
+  name: Private RBAC UI - Manage RoleBindings
+- description: Provides guidelines for topic, connector, and rolebinding creation
+    in Confluent Control Center.
+  name: Private RBAC UI - Creation Guidelines
+- description: |
+    The MDS system caches some information from LDAP; while incomplete,
+    it is suitable for autocomplete in the Confluent Control Center UI. Do not rely
+    on for any purpose other than autocomplete.
+  name: Private RBAC UI - Cached User Store Information
+paths:
+  /security/1.0/authenticate:
+    get:
+      description: Callable by LDAP users.
+      operationId: getToken
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+          description: authenticated
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Get a bearer token.
+      tags:
+      - Tokens and Authentication
+  /security/1.0/authorize:
+    put:
+      description: Callable by Admins+User.
+      operationId: authorize
+      requestBody:
+        content:
+          application/json:
+            example:
+              userPrincipal: User:bob
+              actions:
+              - scope:
+                  clusters:
+                    kafka-cluster: K_GUID
+                resourceName: clicksTopic1
+                resourceType: Topic
+                operation: Read
+            schema:
+              $ref: '#/components/schemas/AuthorizeRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+              - ALLOWED
+              - DENIED
+              schema:
+                items:
+                  type: string
+                type: array
+          description: Authorization proccessed
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Authorize operations against resourceType for a given user.
+      tags:
+      - Authorization
+  /security/1.0/activenodes/{protocol}:
+    get:
+      description: |
+        Clients are expected to round robin call to these endpoints if they don't set up a
+        load balancer in front of the Metadata Service nodes.
+
+        Callable by LDAP users.
+      operationId: activenodes
+      parameters:
+      - description: Should be "http" or "https".
+        example: http
+        explode: false
+        in: path
+        name: protocol
+        required: true
+        schema:
+          pattern: (^http$)|(^https$)
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+              - http://10.10.10.50:8090
+              - http://10.10.10.51:8090
+              schema:
+                items:
+                  type: string
+                type: array
+          description: List of other nodes running the Metadata Service.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Returns all the nodes running the Metadata Service REST API.
+      tags:
+      - Metadata Service Operations
+  /security/1.0/metadataClusterId:
+    get:
+      description: Callable by LDAP users.
+      operationId: metadataClusterId
+      responses:
+        "200":
+          content:
+            application/json:
+              example: ENZ7FS8uTQOhXElRiE-L7g
+              schema:
+                type: string
+          description: Lists other nodes running the Metadata Service.
+      summary: Returns the ID of the Kafka cluster that MDS is running on.
+      tags:
+      - Metadata Service Operations
+  /security/1.0/features:
+    get:
+      description: This endpoint does not require authentication.
+      operationId: features
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeaturesInfo'
+          description: What features MDS supports, and a human friendly description
+            of them.
+      summary: What features the running version of MDS supports.
+      tags:
+      - Metadata Service Operations
+  /security/1.0/roles:
+    get:
+      description: |
+        For information and developer purposes.
+
+        Callable by LDAP users.
+      operationId: roles
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Role'
+                type: array
+          description: List of roles with resourceType and allowed operations.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Returns all the roles defined in the system.
+      tags:
+      - RBAC - Role Definitions
+  /security/1.0/roles/{roleName}:
+    get:
+      description: Callable by LDAP users.
+      operationId: roleDetail
+      parameters:
+      - description: Role name to look up.
+        example: DeveloperRead
+        explode: false
+        in: path
+        name: roleName
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+          description: A single role.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: List the resourceType and operations allowed for a given role.
+      tags:
+      - RBAC - Role Definitions
+  /security/1.0/roleNames:
+    get:
+      description: |
+        For information and developer purposes.
+
+        Callable by LDAP users.
+      operationId: rolenames
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+          description: The names of the roles defined in the system.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Returns the names of all the roles defined in the system.
+      tags:
+      - RBAC - Role Definitions
+  /security/1.0/principals/{principal}/roles/{roleName}:
+    delete:
+      description: |
+        No-op if the user doesn't have the role.
+
+        Callable by Admins.
+      operationId: deleteRoleForPrincipal
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:bob
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      - description: The name of the role.
+        example: DeveloperRead
+        explode: false
+        in: path
+        name: roleName
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MdsScope'
+        required: true
+      responses:
+        "204":
+          description: Role removal processed.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Remove the role (cluster or resource scoped) from the principal at
+        the given scope/cluster.
+      tags:
+      - RBAC - RoleBinding CRUD
+    post:
+      description: Callable by Admins.
+      operationId: addRoleForPrincipal
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:alice
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      - description: The name of the cluster-scoped role to bind the user to.
+        example: UserAdmin
+        explode: false
+        in: path
+        name: roleName
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MdsScope'
+        required: true
+      responses:
+        "204":
+          description: Role Granted
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Binds the principal to a cluster-scoped role for a specific cluster
+        or in the given scope.
+      tags:
+      - RBAC - RoleBinding CRUD
+  /security/1.0/principals/{principal}/roles/{roleName}/resources:
+    post:
+      description: Callable by Admins.
+      operationId: getRoleResourcesForPrincipal
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:bob
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      - description: The name of the role.
+        example: DeveloperRead
+        explode: false
+        in: path
+        name: roleName
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MdsScope'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+              - resourceType: Topic
+                name: clicksTopic1
+                patternType: LITERAL
+              - resourceType: Topic
+                name: orders-2019
+                patternType: PREFIXED
+              schema:
+                items:
+                  $ref: '#/components/schemas/ResourcePattern'
+                type: array
+          description: Granted
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Look up the rolebindings for the principal at the given scope/cluster
+        using the given role.
+      tags:
+      - RBAC - RoleBinding CRUD
+  /security/1.0/principals/{principal}/roles/{roleName}/bindings:
+    delete:
+      description: Callable by Admins+ResourceOwners.
+      operationId: removeRoleResourcesForPrincipal
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:bob
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      - description: The name of the role.
+        example: DeveloperRead
+        explode: false
+        in: path
+        name: roleName
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourcesRequest'
+        required: true
+      responses:
+        "204":
+          description: Resources Removed
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Incrementally remove the resources from the principal at the given
+        scope/cluster using the given role.
+      tags:
+      - RBAC - RoleBinding CRUD
+    post:
+      description: Callable by Admins+ResourceOwners.
+      operationId: addRoleResourcesForPrincipal
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:bob
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      - description: The name of the role.
+        example: DeveloperRead
+        explode: false
+        in: path
+        name: roleName
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourcesRequest'
+        required: true
+      responses:
+        "204":
+          description: Granted
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Incrementally grant the resources to the principal at the given scope/cluster
+        using the given role.
+      tags:
+      - RBAC - RoleBinding CRUD
+    put:
+      description: Callable by Admins+ResourceOwners.
+      operationId: setRoleResourcesForPrincipal
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:bob
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      - description: The name of the role.
+        example: DeveloperRead
+        explode: false
+        in: path
+        name: roleName
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourcesRequest'
+        required: true
+      responses:
+        "204":
+          description: Resources Set
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Overwrite existing resource grants.
+      tags:
+      - RBAC - RoleBinding CRUD
+  /security/1.0/lookup/principals/{principal}/roleNames:
+    post:
+      description: |
+        For groups, these are the roles that are bound.
+
+        For users, this is the combination of roles granted to the specific user and roles
+        granted to the user's groups.
+
+        Callable by Admins+User.
+      operationId: scopedPrincipalRolenames
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:bob
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MdsScope'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+              - Cluster Admin
+              - Security Admin
+              schema:
+                items:
+                  type: string
+                type: array
+          description: List of role names.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Returns the effective list of role names for a principal.
+      tags:
+      - RBAC - RoleBinding Summaries
+  /security/1.0/lookup/principal/{principal}/resources:
+    post:
+      description: |
+        Includes bindings from groups that the user belongs to.
+
+        Callable by Admins+User.
+      operationId: lookupResourcesForPrincipal
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:alice
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MdsScope'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                User:alice:
+                  DeveloperRead:
+                  - resourceType: Topic
+                    name: billing-invoices
+                    patternType: LITERAL
+                Group:Investors:
+                  DeveloperRead:
+                  - resourceType: Topic
+                    name: investing-
+                    patternType: PREFIXED
+              schema:
+                additionalProperties:
+                  additionalProperties:
+                    items:
+                      $ref: '#/components/schemas/ResourcePattern'
+                    type: array
+                  type: object
+                type: object
+          description: Nested map of principal-to-role-to-resources.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Look up the resource bindings for the principal at the given scope/cluster.
+      tags:
+      - RBAC - RoleBinding Summaries
+  /security/1.0/lookup/role/{roleName}:
+    post:
+      description: Callable by Admins.
+      operationId: lookupPrincipalsWithRole
+      parameters:
+      - description: Role name to look up.
+        example: DeveloperRead
+        explode: false
+        in: path
+        name: roleName
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MdsScope'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+              - User:alice
+              - Group:FinanceAdmin
+              schema:
+                items:
+                  type: string
+                type: array
+          description: List of fully-qualified KafkaPrincipals.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Look up the KafkaPrincipals who have the given role for the given scope.
+      tags:
+      - RBAC - RoleBinding Summaries
+  /security/1.0/lookup/role/{roleName}/resource/{resourceType}/name/{resourceName}:
+    post:
+      description: Callable by Admins.
+      operationId: lookupPrincipalsWithRoleOnResource
+      parameters:
+      - description: Role name to look up.
+        example: DeveloperRead
+        explode: false
+        in: path
+        name: roleName
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Type of resource to look up.
+        example: Topic
+        explode: false
+        in: path
+        name: resourceType
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: Name of resource to look up.
+        example: clicksTopic1
+        explode: false
+        in: path
+        name: resourceName
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MdsScope'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+              - User:alice
+              - Group:FinanceAdmin
+              schema:
+                items:
+                  type: string
+                type: array
+          description: List of fully-qualified KafkaPrincipals.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Look up the KafkaPrincipals who have the given role on the specified
+        resource for the given scope.
+      tags:
+      - RBAC - RoleBinding Summaries
+  /security/1.0/acls:
+    delete:
+      description: Callable by Admins+AclUsers.
+      operationId: removeAclBindings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AclFilterRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AclBindings'
+          description: Deleted AclBindings.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Deletes Kafka ACLs according to the supplied filter.
+      tags:
+      - Kafka ACL Management
+    post:
+      description: Callable by Admins+AclUsers.
+      operationId: addAclBinding
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAclRequest'
+        required: true
+      responses:
+        "204":
+          description: Added AclBinding.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Creates Kafka ACLs for given AclBinding.
+      tags:
+      - Kafka ACL Management
+  /security/1.0/acls:search:
+    post:
+      description: Callable by Admins+AclUsers.
+      operationId: searchAclBinding
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AclFilterRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AclBindings'
+          description: Returns all AclBindings that match the given AclBindingFilter.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Lists Kafka ACLs according to the supplied filter.
+      tags:
+      - Kafka ACL Management
+  /security/1.0/registry/clusters:
+    get:
+      description: |
+        If the calling principal doesn't have permissions to see the full cluster info,
+        some information ("hosts", "protocol", etc) is redacted.
+
+        Callable by Admins+User.
+      operationId: clusterRegistryList
+      parameters:
+      - description: Optionally filter down by cluster type.
+        example: kafka-cluster
+        explode: true
+        in: query
+        name: clusterType
+        required: false
+        schema:
+          pattern: ^((kafka)|(ksql)|(connect)|(schema-registry))-cluster$
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ClusterInfo'
+                type: array
+          description: List of Clusters.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Returns a list of all clusters in the registry, optionally filtered
+        by cluster type.
+      tags:
+      - Cluster Registry
+    post:
+      description: |
+        May result in a 409 Conflict if the name and scope combination of any cluster
+        conflicts with existing clusters in the registry.
+
+        Callable by Admins.
+      operationId: updateClusters
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/ClusterInfo'
+              type: array
+        required: true
+      responses:
+        "204":
+          description: Clusters added.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Define/overwrite named clusters.
+      tags:
+      - Cluster Registry
+  /security/1.0/registry/clusters/{clusterName}:
+    delete:
+      description: Callable by Admins.
+      operationId: deleteNamedCluster
+      parameters:
+      - description: The name of cluster (ASCII printable characters without spaces).
+        explode: false
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "204":
+          description: Cluster removed.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Remove a named cluster from the registry.
+      tags:
+      - Cluster Registry
+    get:
+      description: Callable by Admins+User.
+      operationId: getNamedCluster
+      parameters:
+      - description: The name of cluster (ASCII printable characters without spaces).
+        example: StagingKSQLCluster
+        explode: false
+        in: path
+        name: clusterName
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterInfo'
+          description: The named cluster, if it exists and the caller has permission
+            to see it.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Returns the information for a single named cluster, assuming the cluster
+        exists and is visible to the calling principal.
+      tags:
+      - Cluster Registry
+  /security/1.0/lookup/principals/{principal}/visibility:
+    post:
+      description: |
+        The intent is that this endpoint is called with cluster IDs that
+        actually exist.
+
+        Callable by Admins+User.
+      operationId: visibility
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:bob
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/VisibilityRequest'
+              type: array
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisibilityResponse'
+          description: Returns cluster IDs and true/false if the user has any role
+            associated with it.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Endpoint for Confluent Control Center to determine visibilty of Kafka
+        and its sub-clusters for the specifed principal.
+      tags:
+      - Private RBAC UI - Cluster Visibility
+  /security/1.0/lookup/managed/clusters/principal/{principal}:
+    get:
+      description: |
+        May include rolebindings from scopes and clusters that never existed or previously existed
+        (in other words, rolebindings that have been decommissioned, but are still defined in the system).
+
+        Callable by Admins+User.
+      operationId: listManagedClusters
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:bob
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      - description: Filter down by cluster type.
+        example: kafka-cluster
+        explode: true
+        in: query
+        name: clusterType
+        required: false
+        schema:
+          pattern: ^((kafka)|(ksql)|(connect)|(schema-registry))-cluster$
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Scope'
+                type: array
+          description: List of Scopes
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Identifies the scopes for the rolebindings that a user can see.
+      tags:
+      - Private RBAC UI - Cluster Visibility
+    post:
+      description: |
+        Used by the Confluent Control Center UI to control access to rolebinding add/remove buttons.
+
+        Callable by Admins+ResourceOwners.
+      operationId: clusterAccessInfo
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:bob
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scope'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterAccessInfo'
+          description: The rolebinding abilities the user has for a specified scope.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Identify the rolebinding abilities (view vs manage) the user has on
+        the specified scope.
+      tags:
+      - Private RBAC UI - Manage RoleBindings
+  /security/1.0/lookup/rolebindings/principal/{principal}:
+    get:
+      description: |
+        Be aware that this simply looks at the rolebinding data, and does not mean that
+        the clusters actually exist.
+
+        Callable by Admins+User.
+      operationId: myRoleBindingsAll
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:bob
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      - description: Filter down by a cluster type.
+        example: kafka-cluster
+        explode: true
+        in: query
+        name: clusterType
+        required: false
+        schema:
+          pattern: ^((kafka)|(ksql)|(connect)|(schema-registry))-cluster$
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/ScopeRoleBindingMapping'
+                type: array
+          description: List of RoleBindings for the user per scope.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: List all rolebindings for the specifed principal for all scopes and
+        clusters that have any rolebindings.
+      tags:
+      - Private RBAC UI - My RoleBindings
+    post:
+      description: Callable by Admins+User.
+      operationId: myRoleBindingsSingleScope
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:bob
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scope'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScopeRoleBindingMapping'
+          description: Item per Scope
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: List all rolebindings for the specifed principal and scope.
+      tags:
+      - Private RBAC UI - My RoleBindings
+  /security/1.0/lookup/managed/rolebindings/principal/{principal}:
+    post:
+      description: Callable by Admins+ResourceOwners.
+      operationId: managedRoleBindings
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:bob
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      - description: Filter down by resource type.
+        example: Topic
+        explode: true
+        in: query
+        name: resourceType
+        required: false
+        schema:
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scope'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagedRoleBindings'
+          description: Rolebindings that the user can manage.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Identify the rolebindings this user can see and manage.
+      tags:
+      - Private RBAC UI - Manage RoleBindings
+  /security/1.0/lookup/principal/{principal}/resource/{resourceType}/operation/{operation}:
+    post:
+      description: Callable by Admins+User.
+      operationId: lookupCreateGuidelines
+      parameters:
+      - description: Fully-qualified KafkaPrincipal string for a user or group.
+        example: User:alice
+        explode: false
+        in: path
+        name: principal
+        required: true
+        schema:
+          pattern: (^User:.+$)|(^Group:.+$)
+          type: string
+        style: simple
+      - description: The type of resource to create or the type of resource to specify
+          when creating a new rolebinding.
+        explode: false
+        in: path
+        name: resourceType
+        required: true
+        schema:
+          example: Connector
+          type: string
+        style: simple
+      - description: |
+          "Create" for creating an actual resource, "AlterAccess" for creating a rolebinding for a user.
+        explode: false
+        in: path
+        name: operation
+        required: true
+        schema:
+          example: Create
+          pattern: Create|AlterAccess
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scope'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                result: SOME
+                resourcePatterns:
+                - resourceType: Topic
+                  name: billing-invoices
+                  patternType: LITERAL
+                - resourceType: Topic
+                  name: investing-
+                  patternType: PREFIXED
+              schema:
+                properties:
+                  result:
+                    enum:
+                    - ANY
+                    - SOME
+                    - NONE
+                    example: SOME
+                    type: string
+                  resourcePatterns:
+                    items:
+                      $ref: '#/components/schemas/ResourcePattern'
+                    type: array
+          description: A deduped and squashed view of the user's rolebindings for
+            creating resources or rolebindings.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: Summarizes what resources and rolebindings this principal is allowed
+        to create.
+      tags:
+      - Private RBAC UI - Creation Guidelines
+  /security/1.0/rbac/principals:
+    post:
+      description: |
+        For use by a rolebinding admin on the provided scope.
+
+        Callable by Admins+ResourceOwners, but not broker super.users.
+      operationId: usersGroupsList
+      parameters:
+      - description: The type of principals requested.
+        example: user
+        explode: true
+        in: query
+        name: type
+        required: false
+        schema:
+          pattern: ^((user)|(group))$
+          type: string
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scope'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+              - Group:admin
+              - Group:developers
+              - Group:users
+              - User:alice
+              - User:bob
+              - User:charlie
+              - User:david
+              schema:
+                items:
+                  type: string
+                type: array
+          description: The list of principals for the requested type, or all principals.
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Error Response
+      summary: List of MDS cached users and groups.
+      tags:
+      - Private RBAC UI - Cached User Store Information
+  /security/1.0/audit/config:
+    get:
+      description: |
+        Requires the "AuditAdmin" role on the metadata service (MDS) cluster
+        and every Kafka cluster in the cluster registry.
+
+        Callable by Admins.
+      operationId: getConfig
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                destinations:
+                  topics:
+                    confluent-audit-log-events_general_allowed_events:
+                      retention_ms: 2592000000
+                    confluent-audit-log-events_general_denied_events:
+                      retention_ms: 7776000000
+                    confluent-audit-log-events_finance_reads:
+                      retention_ms: 157680000000
+                excluded_principals:
+                - User:Alice
+                - User:service_account_id
+                default_topics:
+                  allowed: confluent-audit-log-events_general_allowed_events
+                  denied: confluent-audit-log-events_general_denied_events
+                routes:
+                  crn://mds1.example.com/kafka=*/topic=*:
+                    management:
+                      allowed: ""
+                      denied: ""
+                    authorize:
+                      allowed: confluent-audit-log-events_general_allowed_events
+                      denied: confluent-audit-log-events_general_denied_events
+                  crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/topic=finance-*:
+                    consume:
+                      allowed: confluent-audit-log-events_finance_reads
+                      denied: confluent-audit-log-events_general_denied_events
+                    interbroker:
+                      allowed: ""
+                      denied: ""
+                metadata:
+                  resource_version: ASNFZ4mrze8BI0VniavN7w
+                  updated_at: 2019-09-09T12:34:56Z
+              schema:
+                $ref: '#/components/schemas/AuditLogConfigSpec'
+          description: The entire audit log configuration.
+      summary: Get the entire audit log configuration, including the live retention
+        time policy values (``retention_ms``) for the destination topics.
+      tags:
+      - Audit Log Configuration
+    put:
+      description: |
+        Also creates missing destination topics on the destination cluster and updates
+        the retention time policy of destination topics, if necessary.
+
+        Requires the "AuditAdmin" role on the MDS cluster and every Kafka
+        cluster in the cluster registry.
+
+        May result in a 409 conflict error status if the ``resource_version``
+        in the JSON body of the request does not match the current version.
+
+        Callable by Admins.
+      operationId: putConfig
+      requestBody:
+        content:
+          application/json:
+            example:
+              destinations:
+                topics:
+                  confluent-audit-log-events_general_allowed_events:
+                    retention_ms: 2592000000
+                  confluent-audit-log-events_general_denied_events:
+                    retention_ms: 7776000000
+                  confluent-audit-log-events_finance_reads:
+                    retention_ms: 157680000000
+              excluded_principals:
+              - User:Alice
+              - User:service_account_id
+              default_topics:
+                allowed: confluent-audit-log-events_general_allowed_events
+                denied: confluent-audit-log-events_general_denied_events
+              routes:
+                crn://mds1.example.com/kafka=*/topic=*:
+                  management:
+                    allowed: ""
+                    denied: ""
+                  authorize:
+                    allowed: confluent-audit-log-events_general_allowed_events
+                    denied: confluent-audit-log-events_general_denied_events
+                crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/topic=finance-*:
+                  consume:
+                    allowed: confluent-audit-log-events_finance_reads
+                    denied: confluent-audit-log-events_general_denied_events
+                  interbroker:
+                    allowed: ""
+                    denied: ""
+              metadata:
+                resource_version: ASNFZ4mrze8BI0VniavN7w
+                updated_at: 2019-09-09T12:34:56Z
+            schema:
+              $ref: '#/components/schemas/AuditLogConfigSpec'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLogConfigSpec'
+          description: The current audit log configuration spec
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLogConfigSpec'
+          description: |
+            Concurrent modification resulted in a conflict. Response
+            will be the current audit log configuration.
+      summary: Update the entire audit log configuration on the MDS cluster and all
+        Kafka clusters known to the cluster registry.
+      tags:
+      - Audit Log Configuration
+  /security/1.0/audit/routes:
+    get:
+      description: |
+        Multiple routes may match a resource,
+        but only the most specific route will be selected for events related
+        to the resource. This endpoint returns all matching routes regardless of
+        whether or not they would actually be selected, or ignored in favor of
+        a more specific route.
+
+        Requires the "AuditAdmin" role on the metadata service (MDS) cluster
+        and every Kafka cluster in the cluster registry.
+
+        Callable by Admins.
+
+        The CRN patterns in the audit log config routes can contain wildcards.
+        So a route with a CRN pattern like
+        ``crn://mds.example.com/kafka=*/topic=finance-*`` would match events
+        associated with the topic at address
+        ``crn://mds.example.com/kafka=abc123/topic=finance-deposits``, or
+        events associated with the topic at
+        ``crn://mds.example.com/kafka=xyz789/topic=finance-chargebacks``, but
+        would not match events associated with the topic
+        ``crn://mds.example.com/kafka=abc123/topic=server-deployments``. So a
+        route's CRN pattern can match events from more than one resource,
+        based on where the pattern's wildcards are.
+
+        It is possible to write multiple routes with different CRN patterns
+        that match a given resource's CRN. For example: the resource at
+        ``crn://mds.example.com/kafka=abc123/topic=finance-chargebacks``
+        is matched by any of the following route CRN patterns:
+
+        * ``crn://mds.example.com/kafka=*/topic=*``
+        * ``crn://mds.example.com/kafka=abc123/topic=*``
+        * ``crn://mds.example.com/kafka=*/topic=finance-*``
+
+        When there are multiple matching routes for an event, we select the
+        matching route with the most specific CRN pattern. The most specific
+        CRN pattern is the one with the greatest length before its first
+        wildcard. So in the above example,
+        ``crn://mds.example.com/kafka=abc123/topic=*`` wins.
+
+        To break a tie, ignore the prefix that the patterns have in common.
+        So, for example ``crn://mds.example.com/kafka=*/topic=finance-*`` is
+        more specific than ``crn://mds.example.com/kafka=*/topic=*``.
+
+        This endpoint lists all currently defined routes that match the
+        queried resource or its sub-resources, regardless of whether or not
+        they would actually be selected, or ignored in favor of a more
+        specific route.
+
+        A query pattern like ...
+
+        ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/connect=qa-test``
+
+        ... would match all of the following routes ...
+
+        ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/connect=qa-test/connector=from-db4``
+
+        ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/connect=qa-test/connector=*``
+
+        ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/connect=*/connector=*``
+
+        ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/connect=qa-*``
+
+        ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/connect=*``
+
+        ``crn://mds1.example.com/kafka=*/connect=qa-*``
+
+        ``crn://mds1.example.com/kafka=*/connect=qa-*/connector=*``
+
+        ... but would not match any of these routes ...
+
+        ``crn://mds1.example.com/kafka=*/ksql=*``
+
+        ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567``
+
+        ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/connect=stg-*``
+
+        ``crn://mds1.example.com/kafka=zyxwv-UTSRQPO_98765432/connect=qa-*``
+
+        ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/topic=qa-*``
+      operationId: listRoutes
+      parameters:
+      - description: |
+          A Confluent resource name (CRN) .
+        example: crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/connect=qa-test
+        explode: true
+        in: query
+        name: q
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                default_topics:
+                  allowed: confluent-audit-log-events_general_allowed_events
+                  denied: confluent-audit-log-events_general_denied_events
+                routes:
+                  crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/connect=qa-test/connector=from-db4:
+                    management:
+                      allowed: ""
+                      denied: ""
+                  crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/connect=*:
+                    authorize:
+                      allowed: confluent-audit-log-events_abc-connector-allowed
+                      denied: confluent-audit-log-events_abc-connector-denied
+              schema:
+                $ref: '#/components/schemas/AuditLogConfigListRoutesResponse'
+          description: Matching routes and their rules
+      summary: Lists all currently defined routes that match the queried resource
+        or its sub-resources.
+      tags:
+      - Audit Log Configuration
+  /security/1.0/audit/lookup:
+    get:
+      description: |
+        Requires the "AuditAdmin" role on the metadata service (MDS) cluster
+        and every Kafka cluster in the cluster registry.
+
+        The CRN patterns in the audit log config routes can contain wildcards.
+        So a route with a CRN pattern like
+        ``crn://mds.example.com/kafka=*/topic=finance-*`` would match events
+        associated with the topic at address
+        ``crn://mds.example.com/kafka=abc123/topic=finance-deposits``, or
+        events associated with the topic at
+        ``crn://mds.example.com/kafka=xyz789/topic=finance-chargebacks``, but
+        would not match events associated with the topic
+        ``crn://mds.example.com/kafka=abc123/topic=server-deployments``. So a
+        route's CRN pattern can match events from more than one resource,
+        based on where the pattern's wildcards are.
+
+        It is possible to write multiple routes with different CRN patterns
+        that match a given resource's CRN. For example: the resource at
+        ``crn://mds.example.com/kafka=abc123/topic=finance-chargebacks``
+        is matched by any of the following route CRN patterns:
+
+        * ``crn://mds.example.com/kafka=*/topic=*``
+        * ``crn://mds.example.com/kafka=abc123/topic=*``
+        * ``crn://mds.example.com/kafka=*/topic=finance-*``
+
+        When there are multiple matching routes for an event, we select the
+        matching route with the most specific CRN pattern. The most specific
+        CRN pattern is the one with the greatest length before its first
+        wildcard. So in the above example,
+        ``crn://mds.example.com/kafka=abc123/topic=*`` wins.
+
+        To break a tie, ignore the prefix that the patterns have in common.
+        So, for example ``crn://mds.example.com/kafka=*/topic=finance-*`` is
+        more specific than ``crn://mds.example.com/kafka=*/topic=*``.
+
+        This endpoint resolves the matching and precedence rules of all
+        configured audit log routes for you, and returns the one selected
+        (most specific) matching route describing how messages regarding the
+        given CRN would be routed.
+        Callable by Admins.
+      operationId: resolveResourceRoute
+      parameters:
+      - description: A Confluent resource name (CRN).
+        example: crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/topic=finance-payments
+        explode: true
+        in: query
+        name: crn
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                route: crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/topic=finance-*
+                categories:
+                  authorize:
+                    allowed: confluent-audit-log-events_general_allowed_events
+                    denied: confluent-audit-log-events_general_denied_events
+                  consume:
+                    allowed: ""
+                    denied: confluent-audit-log-events_finance_denied
+                  describe:
+                    allowed: ""
+                    denied: ""
+                  heartbeat:
+                    allowed: ""
+                    denied: ""
+                  interbroker:
+                    allowed: ""
+                    denied: ""
+                  management:
+                    allowed: confluent-audit-log-events_general_allowed_events
+                    denied: confluent-audit-log-events_general_denied_events
+                  produce:
+                    allowed: confluent-audit-log-events_finance_produce_allowed
+                    denied: confluent-audit-log-events_finance_denied
+              schema:
+                $ref: '#/components/schemas/AuditLogConfigResolveResourceRouteResponse'
+          description: |
+            The CRN pattern of the route that will be selected and used by the
+            system (or else the string ``"default"``), and the route's rules
+            for various audit log event categories. Categories include
+            ``produce``, ``consume``, ``interbroker``, ``authorize``,
+            ``authentication``, ``management``, `heartbeat``, and ``describe``.
+            If needed, the server fills in any missing or ``null`` values in
+            the rules by coalescing with defaults: ``authentication``,
+            ``authorize``, and ``management`` categories will default
+            to the destination topics specified in ``default_topics``. All
+            other categories default to an empty string. Rules that resolve to
+            an empty string indicate that events will be discarded.
+      summary: Returns the route describing how messages regarding this CRN would
+        be routed.
+      tags:
+      - Audit Log Configuration
+components:
+  schemas:
+    AuditLogConfigDefaultTopics:
+      example:
+        allowed: allowed
+        denied: denied
+      properties:
+        allowed:
+          description: |
+            The name of one of the destination Kafka topics, defined elsewhere
+            in the audit log configuration, that shall receive messages about
+            attempted actions when they are "allowed" by the system based on
+            security access policies.
+
+            You can set this value to an empty string instead, to discard the
+            "allowed" events routed here. The empty string is the only valid
+            value other than one of the Kafka topic names in the spec's
+            ``destinations`` section.
+
+            This field specifies the default destination for events related to
+            "allowed" actions in the following categories: ``authentication``,
+            ``management``, and ``authorize``. All other event categories are
+            discarded by default. Events only follow the default behavior if
+            they do not match any of the audit log configuration ``routes``
+            CRN patterns, or if their selected route omits (or leaves
+            ``null``) the destination topic.
+          type: string
+        denied:
+          description: |
+            The name of one of the destination Kafka topics, defined elsewhere
+            in the audit log configuration, that shall receive messages about
+            attempted actions when they are "denied" by the system based on
+            security access policies.
+
+            You can set this value to an empty string instead, to discard the
+            "denied" events routed here.The empty string is the only valid
+            value other than one of the Kafka topic names in the spec's
+            ``destinations`` section.
+
+            This field specifies the default destination for events related to
+            "denied" actions in the following categories: ``authentication``,
+            ``management``, and ``authorize``. All other event categories are
+            discarded by default. Events only follow the default behavior if
+            they do not match any of the audit log configuration ``routes``
+            CRN patterns, or if their selected route omits (or leaves
+            ``null``) the destination topic.
+          type: string
+      required:
+      - allowed
+      - denied
+      type: object
+    AuditLogConfigRouteCategoryTopics:
+      example:
+        allowed: allowed
+        denied: denied
+      nullable: true
+      properties:
+        allowed:
+          description: |
+            The name of one of the destination Kafka topics, defined elsewhere
+            in the audit log configuration, that shall receive messages about
+            attempted actions when they are "allowed" by the system based on
+            security access policies.
+
+            You can set this value to an empty string, to discard the events
+            instead.
+
+            You can set this value to ``null`` (or omit this property) to use
+            the default behavior. By default the ``authentication``,
+            ``authorize``, and ``management`` categories of events are
+            routed according to the destination specified in
+            ``default_topics``. Events in all other categories are discarded by
+            default.
+
+            The empty string or a ``null`` value are the only valid values other
+            than one of the defined destination Kafka topic names.
+
+            This route will only be selected for an event if the routing rule's
+            CRN pattern matches the event's associated resource CRN, and its
+            CRN pattern is the most specific among those that match the event.
+          nullable: true
+          type: string
+        denied:
+          description: |
+            The name of one of the destination Kafka topics, defined elsewhere
+            in the audit log configuration, that shall receive messages about
+            attempted actions when they are "denied" by the system based on
+            security access policies.
+
+            You can set this value to an empty string, to discard the events
+            instead.
+
+            You can set this value to ``null`` (or omit this property) to use
+            the default behavior. By default the ``authentication``,
+            ``authorize``, and ``management`` categories of events are
+            routed according to the destination specified in
+            ``default_topics``. Events in all other categories are discarded by
+            default.
+
+            The empty string or a ``null`` value are the only valid values other
+            than one of the defined destination Kafka topic names.
+
+            This route will only be selected for an event if the routing rule's
+            CRN pattern matches the event's associated resource CRN, and its
+            CRN pattern is the most specific among those that match the event.
+          nullable: true
+          type: string
+      required:
+      - allowed
+      - denied
+      type: object
+    AuditLogConfigDestinationConfig:
+      properties:
+        retention_ms:
+          description: The number of milliseconds to keep events sent to this topic
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - retention_ms
+      type: object
+    AuditLogConfigDestinations:
+      example:
+        bootstrap_servers:
+        - localhost:8090
+        topics:
+          confluent-audit-log-events_general_allowed_events:
+            retention_ms: 2592000000
+          confluent-audit-log-events_general_denied_events:
+            retention_ms: 7776000000
+          confluent-audit-log-events_finance_topics:
+            retention_ms: 157680000000
+      properties:
+        bootstrap_servers:
+          description: |
+            A list of Kafka broker endpoints, used when configuring the Kafka
+            producer(s) that will emit audit log events as they occur.
+
+            See Kafka Producer Configuration ``bootstrap.servers``:
+            https://kafka.apache.org/documentation/#producerconfigs
+          items:
+            pattern: ^[-.a-zA-Z0-9]{1,253}:[0-9]{1,5}$
+            type: string
+          type: array
+        topics:
+          additionalProperties:
+            $ref: '#/components/schemas/AuditLogConfigDestinationConfig'
+          description: |
+            The destination Kafka topics that can receive audit log events.
+            The keys are Kafka topic names used in routes within the audit log
+            configuration specification. The values are the configuration
+            details for each destination topic. Note that topic names must
+            match the pattern ``^confluent-audit-log-events[-_a-zA-Z0-9]*$`` and
+            be 249 characters or less.
+          type: object
+      required:
+      - topics
+      type: object
+    AuditLogConfigRouteCategories:
+      description: |
+        Once the most specific matching route for an event is selected based
+        on the event's associated resource (CRN), it is then matched within
+        that route to exactly one event category rule, based on the category
+        of event, and finally matched within the category rule to a logging
+        destination based on whether the event was "allowed" or "denied".
+
+        Event categories include ``authorize``, ``management``, ``authentication``,
+        ``interbroker``, ``produce``, ``consume``, ``heartbeat``, and
+        ``describe``.
+
+        The ``authorize`` category of events are those where the metadata
+        service was asked to check whether the principal was authorized via
+        RBAC to perform an operation on a resource.
+
+        The ``management`` category of events are those involving Kafka APIs
+        that alter cluster or topic configuration settings, create, delete or
+        modify topics or delegation tokens, initiate shutdown, etc.
+
+        The ``produce``, ``consume``, ``interbroker``, ``heartbeat``, and
+        ``describe`` categories may include a potentially high volume of
+        events. For example, every "fetch" request received by a Kafka broker
+        from a Kafka consumer could result in one or more auditable events in
+        the ``consume`` category. Consider the possible write load on your
+        audit log destination cluster before enabling audit logging for these
+        categories.
+
+        If the matched rule's logging destination is the empty string, the
+        event is discarded.
+
+        If the logging destination is ``null``, matched events in the
+        ``authentication``, ``authorize`` and ``management`` categories will be
+        routed to the corresponding entry in ``default_topics``; but matched
+        events in any other category will be discarded.
+
+        Note: the ``other`` category is deprecated and will be removed in a
+        future version.
+      example:
+        other:
+          allowed: allowed
+          denied: denied
+        management:
+          allowed: allowed
+          denied: denied
+        interbroker:
+          allowed: allowed
+          denied: denied
+        heartbeat:
+          allowed: allowed
+          denied: denied
+        consume:
+          allowed: allowed
+          denied: denied
+        describe:
+          allowed: allowed
+          denied: denied
+        authorize:
+          allowed: allowed
+          denied: denied
+        produce:
+          allowed: allowed
+          denied: denied
+        authentication:
+          allowed: allowed
+          denied: denied
+      properties:
+        other:
+          $ref: '#/components/schemas/AuditLogConfigRouteCategoryTopics'
+        authentication:
+          $ref: '#/components/schemas/AuditLogConfigRouteCategoryTopics'
+        authorize:
+          $ref: '#/components/schemas/AuditLogConfigRouteCategoryTopics'
+        management:
+          $ref: '#/components/schemas/AuditLogConfigRouteCategoryTopics'
+        produce:
+          $ref: '#/components/schemas/AuditLogConfigRouteCategoryTopics'
+        consume:
+          $ref: '#/components/schemas/AuditLogConfigRouteCategoryTopics'
+        interbroker:
+          $ref: '#/components/schemas/AuditLogConfigRouteCategoryTopics'
+        heartbeat:
+          $ref: '#/components/schemas/AuditLogConfigRouteCategoryTopics'
+        describe:
+          $ref: '#/components/schemas/AuditLogConfigRouteCategoryTopics'
+      type: object
+    AuditLogConfigRoutes:
+      additionalProperties:
+        $ref: '#/components/schemas/AuditLogConfigRouteCategories'
+      description: |
+        Events are matched to exactly one of these route patterns (or
+        else to the ``default_topics``). The route patterns can be any valid
+        Confluent resource name (CRN), or even a CRN containing wildcards.
+        The most specific pattern that matches an event will be chosen.
+        Consider these example route patterns that match events on Kafka
+        topic resources. They are ordered here from most to least specific:
+
+        ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/topic=clicks``
+
+        ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/topic=*``
+
+        ``crn://mds1.example.com/kafka=*/topic=clicks``
+
+        ``crn://mds1.example.com/kafka=*/topic=*``
+
+        ``crn:///kafka=abcde_FGHIJKL-01234567/topic=clicks``
+
+        ``crn:///kafka=*/topic=*``
+
+        For a CRN pattern to match a CRN, the Authority sections must match
+        and the CRN pattern and the CRN must have all of the same path element
+        types in the same order. The Authority section of a CRN is between the
+        second and third slash ("mds1.example.com" in
+        ``crn://mds1.example.com/kafka=*/topic=*``). It may be left empty (as
+        in ``crn:///kafka=*/topic=*``). A CRN pattern with an empty Authority
+        section matches a CRN with ANY Authority. The converse is not true: A
+        CRN pattern with a non-empty Authority will not match a CRN with an
+        empty Authority. A resource with an empty Authority CRN can only be
+        matched by a CRN pattern with an empty Authority.
+
+        So an event on the resource with the CRN...
+
+        ``crn://confluent.cloud/kafka=abcde_FGHIJKL-01234567/topic=clicks``
+
+        ... would not match a route with pattern ...
+
+        ``crn://confluent.cloud/kafka=abcde_FGHIJKL-01234567``
+
+        ... because they do not have matching path element types.
+
+        Once the most specific matching route for an event is determined,
+        it is then matched within that route to exactly one event category,
+        and then based on whether it was "allowed" or "denied", matched to
+        exactly one destination topic (or discarded, if the rule's destination
+        topic name is the empty string). If the category rule's destination
+        topic is ``null`` then it either falls through to the
+        ``default_topics`` (for ``authentication``, ``authorize``, and
+        ``management`` categories), or is discarded (which is the default
+        for all other categories of events).
+      nullable: true
+      type: object
+    AuditLogConfigMetadata:
+      example:
+        updated_at: 2000-01-23T04:56:07.000+00:00
+        modified_since: 2000-01-23T04:56:07.000+00:00
+        resource_version: resource_version
+      nullable: true
+      properties:
+        resource_version:
+          description: |
+            An opaque, server-generated marker, used to detect concurrent
+            modification collisions. When submitting an update, the
+            request will be rejected unless this value agrees with the
+            version expected by the server. GET the current configuration
+            first, to find out the expected ``resource_version``.
+          type: string
+        updated_at:
+          description: |
+            When the audit log configuration was last modified.
+            This value is set by the server, and ignored when submitted.
+          format: date-time
+          nullable: true
+          type: string
+        modified_since:
+          description: |
+            When the server detects that the audit log configuration has been
+            modified through another mechanism but is not sure when the
+            modification occurred, the ``updated_at`` property is renamed to
+            ``modified_since``. This value is set by the server, and ignored when
+            submitted.
+          format: date-time
+          nullable: true
+          type: string
+      required:
+      - resource_version
+      type: object
+    AuditLogConfigSpec:
+      example:
+        routes:
+          key:
+            other:
+              allowed: allowed
+              denied: denied
+            management:
+              allowed: allowed
+              denied: denied
+            interbroker:
+              allowed: allowed
+              denied: denied
+            heartbeat:
+              allowed: allowed
+              denied: denied
+            consume:
+              allowed: allowed
+              denied: denied
+            describe:
+              allowed: allowed
+              denied: denied
+            authorize:
+              allowed: allowed
+              denied: denied
+            produce:
+              allowed: allowed
+              denied: denied
+            authentication:
+              allowed: allowed
+              denied: denied
+        metadata:
+          updated_at: 2000-01-23T04:56:07.000+00:00
+          modified_since: 2000-01-23T04:56:07.000+00:00
+          resource_version: resource_version
+        destinations:
+          bootstrap_servers:
+          - localhost:8090
+          topics:
+            confluent-audit-log-events_general_allowed_events:
+              retention_ms: 2592000000
+            confluent-audit-log-events_general_denied_events:
+              retention_ms: 7776000000
+            confluent-audit-log-events_finance_topics:
+              retention_ms: 157680000000
+        excluded_principals:
+        - User:Alice
+        - User:service_account_id
+        default_topics:
+          allowed: allowed
+          denied: denied
+      properties:
+        destinations:
+          $ref: '#/components/schemas/AuditLogConfigDestinations'
+        excluded_principals:
+          default: []
+          description: |
+            A list of security principals to exclude from the audit log.
+            The list may be empty.
+          example:
+          - User:Alice
+          - User:service_account_id
+          items:
+            pattern: ^User:.+$
+            type: string
+          nullable: true
+          type: array
+        default_topics:
+          $ref: '#/components/schemas/AuditLogConfigDefaultTopics'
+        routes:
+          additionalProperties:
+            $ref: '#/components/schemas/AuditLogConfigRouteCategories'
+          description: |
+            Events are matched to exactly one of these route patterns (or
+            else to the ``default_topics``). The route patterns can be any valid
+            Confluent resource name (CRN), or even a CRN containing wildcards.
+            The most specific pattern that matches an event will be chosen.
+            Consider these example route patterns that match events on Kafka
+            topic resources. They are ordered here from most to least specific:
+
+            ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/topic=clicks``
+
+            ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/topic=*``
+
+            ``crn://mds1.example.com/kafka=*/topic=clicks``
+
+            ``crn://mds1.example.com/kafka=*/topic=*``
+
+            ``crn:///kafka=abcde_FGHIJKL-01234567/topic=clicks``
+
+            ``crn:///kafka=*/topic=*``
+
+            For a CRN pattern to match a CRN, the Authority sections must match
+            and the CRN pattern and the CRN must have all of the same path element
+            types in the same order. The Authority section of a CRN is between the
+            second and third slash ("mds1.example.com" in
+            ``crn://mds1.example.com/kafka=*/topic=*``). It may be left empty (as
+            in ``crn:///kafka=*/topic=*``). A CRN pattern with an empty Authority
+            section matches a CRN with ANY Authority. The converse is not true: A
+            CRN pattern with a non-empty Authority will not match a CRN with an
+            empty Authority. A resource with an empty Authority CRN can only be
+            matched by a CRN pattern with an empty Authority.
+
+            So an event on the resource with the CRN...
+
+            ``crn://confluent.cloud/kafka=abcde_FGHIJKL-01234567/topic=clicks``
+
+            ... would not match a route with pattern ...
+
+            ``crn://confluent.cloud/kafka=abcde_FGHIJKL-01234567``
+
+            ... because they do not have matching path element types.
+
+            Once the most specific matching route for an event is determined,
+            it is then matched within that route to exactly one event category,
+            and then based on whether it was "allowed" or "denied", matched to
+            exactly one destination topic (or discarded, if the rule's destination
+            topic name is the empty string). If the category rule's destination
+            topic is ``null`` then it either falls through to the
+            ``default_topics`` (for ``authentication``, ``authorize``, and
+            ``management`` categories), or is discarded (which is the default
+            for all other categories of events).
+          nullable: true
+          type: object
+        metadata:
+          $ref: '#/components/schemas/AuditLogConfigMetadata'
+      required:
+      - default_topics
+      - destinations
+      - metadata
+      type: object
+    AuditLogConfigListRoutesResponse:
+      example:
+        routes:
+          key:
+            other:
+              allowed: allowed
+              denied: denied
+            management:
+              allowed: allowed
+              denied: denied
+            interbroker:
+              allowed: allowed
+              denied: denied
+            heartbeat:
+              allowed: allowed
+              denied: denied
+            consume:
+              allowed: allowed
+              denied: denied
+            describe:
+              allowed: allowed
+              denied: denied
+            authorize:
+              allowed: allowed
+              denied: denied
+            produce:
+              allowed: allowed
+              denied: denied
+            authentication:
+              allowed: allowed
+              denied: denied
+        default_topics:
+          allowed: allowed
+          denied: denied
+      properties:
+        default_topics:
+          $ref: '#/components/schemas/AuditLogConfigDefaultTopics'
+        routes:
+          additionalProperties:
+            $ref: '#/components/schemas/AuditLogConfigRouteCategories'
+          description: |
+            Events are matched to exactly one of these route patterns (or
+            else to the ``default_topics``). The route patterns can be any valid
+            Confluent resource name (CRN), or even a CRN containing wildcards.
+            The most specific pattern that matches an event will be chosen.
+            Consider these example route patterns that match events on Kafka
+            topic resources. They are ordered here from most to least specific:
+
+            ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/topic=clicks``
+
+            ``crn://mds1.example.com/kafka=abcde_FGHIJKL-01234567/topic=*``
+
+            ``crn://mds1.example.com/kafka=*/topic=clicks``
+
+            ``crn://mds1.example.com/kafka=*/topic=*``
+
+            ``crn:///kafka=abcde_FGHIJKL-01234567/topic=clicks``
+
+            ``crn:///kafka=*/topic=*``
+
+            For a CRN pattern to match a CRN, the Authority sections must match
+            and the CRN pattern and the CRN must have all of the same path element
+            types in the same order. The Authority section of a CRN is between the
+            second and third slash ("mds1.example.com" in
+            ``crn://mds1.example.com/kafka=*/topic=*``). It may be left empty (as
+            in ``crn:///kafka=*/topic=*``). A CRN pattern with an empty Authority
+            section matches a CRN with ANY Authority. The converse is not true: A
+            CRN pattern with a non-empty Authority will not match a CRN with an
+            empty Authority. A resource with an empty Authority CRN can only be
+            matched by a CRN pattern with an empty Authority.
+
+            So an event on the resource with the CRN...
+
+            ``crn://confluent.cloud/kafka=abcde_FGHIJKL-01234567/topic=clicks``
+
+            ... would not match a route with pattern ...
+
+            ``crn://confluent.cloud/kafka=abcde_FGHIJKL-01234567``
+
+            ... because they do not have matching path element types.
+
+            Once the most specific matching route for an event is determined,
+            it is then matched within that route to exactly one event category,
+            and then based on whether it was "allowed" or "denied", matched to
+            exactly one destination topic (or discarded, if the rule's destination
+            topic name is the empty string). If the category rule's destination
+            topic is ``null`` then it either falls through to the
+            ``default_topics`` (for ``authentication``, ``authorize``, and
+            ``management`` categories), or is discarded (which is the default
+            for all other categories of events).
+          nullable: true
+          type: object
+      type: object
+    AuditLogConfigResolveResourceRouteResponse:
+      example:
+        route: route
+        categories:
+          other:
+            allowed: allowed
+            denied: denied
+          management:
+            allowed: allowed
+            denied: denied
+          interbroker:
+            allowed: allowed
+            denied: denied
+          heartbeat:
+            allowed: allowed
+            denied: denied
+          consume:
+            allowed: allowed
+            denied: denied
+          describe:
+            allowed: allowed
+            denied: denied
+          authorize:
+            allowed: allowed
+            denied: denied
+          produce:
+            allowed: allowed
+            denied: denied
+          authentication:
+            allowed: allowed
+            denied: denied
+      properties:
+        route:
+          description: |
+            The Confluent resource name (CRN) pattern of the route, or else
+            the string ``"default"``.
+          type: string
+        categories:
+          $ref: '#/components/schemas/AuditLogConfigRouteCategories'
+      type: object
+    AuthorizeRequest:
+      example:
+        userPrincipal: User:bob
+        actions:
+        - scope:
+            clusters:
+              kafka-cluster: kafkaClusterId
+              schema-registry-cluster: schemaRegistryClusterId
+              ksql-cluster: ksqlClusterId
+              connect-cluster: connectClusterId
+          resourceName: clicksTopic1
+          operation: Read
+          resourceType: Topic
+        - scope:
+            clusters:
+              kafka-cluster: kafkaClusterId
+              schema-registry-cluster: schemaRegistryClusterId
+              ksql-cluster: ksqlClusterId
+              connect-cluster: connectClusterId
+          resourceName: clicksTopic1
+          operation: Read
+          resourceType: Topic
+      properties:
+        userPrincipal:
+          description: The 'target' user principal.
+          example: User:bob
+          pattern: ^User:.+$
+          type: string
+        actions:
+          description: Actions to authorize.
+          items:
+            $ref: '#/components/schemas/Action'
+          type: array
+      required:
+      - actions
+      - userPrincipal
+      type: object
+    ResourcesRequest:
+      example:
+        resourcePatterns:
+        - name: clicksTopic1
+          patternType: LITERAL
+          resourceType: Topic
+        - name: clicksTopic1
+          patternType: LITERAL
+          resourceType: Topic
+        scope:
+          clusterName: StagingCluster
+          clusters:
+            kafka-cluster: kafkaClusterId
+            schema-registry-cluster: schemaRegistryClusterId
+            ksql-cluster: ksqlClusterId
+            connect-cluster: connectClusterId
+      properties:
+        scope:
+          $ref: '#/components/schemas/MdsScope'
+        resourcePatterns:
+          items:
+            $ref: '#/components/schemas/ResourcePattern'
+          type: array
+      required:
+      - resourcePatterns
+      - scope
+      type: object
+    VisibilityRequest:
+      example:
+        kafka-cluster: kafka-id
+        ksql-clusters:
+        - ksql-cluster-id
+        - ksql-cluster-id
+        connect-clusters:
+        - connect-cluster-id
+        - connect-cluster-id
+        schema-registry-clusters:
+        - schema-registry-id
+        - schema-registry-id
+      properties:
+        kafka-cluster:
+          example: kafka-id
+          type: string
+        connect-clusters:
+          items:
+            example: connect-cluster-id
+            type: string
+          type: array
+        schema-registry-clusters:
+          items:
+            example: schema-registry-id
+            type: string
+          type: array
+        ksql-clusters:
+          items:
+            example: ksql-cluster-id
+            type: string
+          type: array
+      required:
+      - kafka-cluster
+      type: object
+    ClusterVisibility:
+      example:
+        visible: true
+        clusterName: stagingKafkaCluster
+        id: clusterId
+      properties:
+        id:
+          example: clusterId
+          type: string
+        visible:
+          type: boolean
+        clusterName:
+          example: stagingKafkaCluster
+          nullable: true
+          type: string
+      type: object
+    VisibilityResponse:
+      example:
+        kafka-cluster:
+          visible: true
+          clusterName: stagingKafkaCluster
+          id: clusterId
+        ksql-clusters:
+        - visible: true
+          clusterName: stagingKafkaCluster
+          id: clusterId
+        - visible: true
+          clusterName: stagingKafkaCluster
+          id: clusterId
+        connect-clusters:
+        - visible: true
+          clusterName: stagingKafkaCluster
+          id: clusterId
+        - visible: true
+          clusterName: stagingKafkaCluster
+          id: clusterId
+        schema-registry-clusters:
+        - visible: true
+          clusterName: stagingKafkaCluster
+          id: clusterId
+        - visible: true
+          clusterName: stagingKafkaCluster
+          id: clusterId
+      properties:
+        kafka-cluster:
+          $ref: '#/components/schemas/ClusterVisibility'
+        connect-clusters:
+          items:
+            $ref: '#/components/schemas/ClusterVisibility'
+          type: array
+        schema-registry-clusters:
+          items:
+            $ref: '#/components/schemas/ClusterVisibility'
+          type: array
+        ksql-clusters:
+          items:
+            $ref: '#/components/schemas/ClusterVisibility'
+          type: array
+      type: object
+    ScopeRoleBindingMapping:
+      example:
+        scope:
+          clusterName: StagingCluster
+          clusters:
+            kafka-cluster: kafkaClusterId
+            schema-registry-cluster: schemaRegistryClusterId
+            ksql-cluster: ksqlClusterId
+            connect-cluster: connectClusterId
+        rolebindings:
+          key:
+            key:
+            - name: clicksTopic1
+              patternType: LITERAL
+              resourceType: Topic
+            - name: clicksTopic1
+              patternType: LITERAL
+              resourceType: Topic
+      properties:
+        scope:
+          $ref: '#/components/schemas/MdsScope'
+        rolebindings:
+          additionalProperties:
+            additionalProperties:
+              items:
+                $ref: '#/components/schemas/ResourcePattern'
+              type: array
+            type: object
+          type: object
+      type: object
+    FeaturesInfo:
+      example:
+        features:
+          FEATURE_A.1.enabled: true
+          FEATURE_B.1.enabled: true
+        legend:
+          FEATURE_A.1.enabled: Config controlled feature - Description of FEATURE_A,
+            which is determined by the config of MDS.
+          FEATURE_B.1.enabled: 'Description of FEATURE_B, which is fixed functionality
+            based on the version of the MDS running. '
+      properties:
+        features:
+          additionalProperties:
+            type: boolean
+          example:
+            FEATURE_A.1.enabled: true
+            FEATURE_B.1.enabled: true
+          type: object
+        legend:
+          additionalProperties:
+            type: string
+          example:
+            FEATURE_A.1.enabled: Config controlled feature - Description of FEATURE_A,
+              which is determined by the config of MDS.
+            FEATURE_B.1.enabled: 'Description of FEATURE_B, which is fixed functionality
+              based on the version of the MDS running. '
+          type: object
+      type: object
+    ClusterAccessInfo:
+      example:
+        cluster:
+        - AlterAccess
+        - DescribeAccess
+        resources:
+          key:
+          - AlterAccess
+          - DescribeAccess
+      properties:
+        cluster:
+          example:
+          - AlterAccess
+          - DescribeAccess
+          items:
+            type: string
+          type: array
+        resources:
+          additionalProperties:
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            example:
+            - AlterAccess
+            - DescribeAccess
+            type: object
+          type: object
+      type: object
+    ClusterInfo:
+      example:
+        protocol: SASL_PLAINTEXT
+        hosts:
+        - port: 9092
+          host: 10.10.10.10
+        - port: 9092
+          host: 10.10.10.10
+        clusterName: StagingKSQLCluster
+        scope:
+          clusters:
+            kafka-cluster: kafkaClusterId
+            schema-registry-cluster: schemaRegistryClusterId
+            ksql-cluster: ksqlClusterId
+            connect-cluster: connectClusterId
+      properties:
+        clusterName:
+          example: StagingKSQLCluster
+          type: string
+        scope:
+          $ref: '#/components/schemas/Scope'
+        hosts:
+          items:
+            $ref: '#/components/schemas/HostInfo'
+          type: array
+        protocol:
+          $ref: '#/components/schemas/Protocol'
+      type: object
+    HostInfo:
+      example:
+        port: 9092
+        host: 10.10.10.10
+      properties:
+        host:
+          example: 10.10.10.10
+          type: string
+        port:
+          example: 9092
+          type: integer
+      type: object
+    ManagedRoleBindings:
+      example:
+        resource_role_bindings:
+          key:
+            key:
+            - role: DeveloperRead
+              resourcePattern: LITERAL
+              alterAccess: true
+              resourceName: clicksTopic1
+              resourceType: Topic
+            - role: DeveloperRead
+              resourcePattern: LITERAL
+              alterAccess: true
+              resourceName: clicksTopic1
+              resourceType: Topic
+        scope:
+          clusters:
+            kafka-cluster: kafkaClusterId
+            schema-registry-cluster: schemaRegistryClusterId
+            ksql-cluster: ksqlClusterId
+            connect-cluster: connectClusterId
+        cluster_role_bindings:
+          key:
+            key:
+            - cluster_role_bindings
+            - cluster_role_bindings
+      properties:
+        scope:
+          $ref: '#/components/schemas/Scope'
+        cluster_role_bindings:
+          additionalProperties:
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+          type: object
+        resource_role_bindings:
+          additionalProperties:
+            additionalProperties:
+              items:
+                $ref: '#/components/schemas/ManagedResourceBinding'
+              type: array
+            type: object
+          type: object
+      type: object
+    ManagedResourceBinding:
+      example:
+        role: DeveloperRead
+        resourcePattern: LITERAL
+        alterAccess: true
+        resourceName: clicksTopic1
+        resourceType: Topic
+      properties:
+        role:
+          example: DeveloperRead
+          type: string
+        resourceType:
+          example: Topic
+          type: string
+        resourceName:
+          example: clicksTopic1
+          type: string
+        resourcePattern:
+          example: LITERAL
+          type: string
+        alterAccess:
+          example: true
+          type: boolean
+      type: object
+    Action:
+      example:
+        scope:
+          clusters:
+            kafka-cluster: kafkaClusterId
+            schema-registry-cluster: schemaRegistryClusterId
+            ksql-cluster: ksqlClusterId
+            connect-cluster: connectClusterId
+        resourceName: clicksTopic1
+        operation: Read
+        resourceType: Topic
+      properties:
+        scope:
+          $ref: '#/components/schemas/Scope'
+        operation:
+          example: Read
+          type: string
+        resourceType:
+          example: Topic
+          type: string
+        resourceName:
+          example: clicksTopic1
+          type: string
+      required:
+      - operation
+      - resourceName
+      - resourceType
+      - scope
+      type: object
+    Scope:
+      example:
+        clusters:
+          kafka-cluster: kafkaClusterId
+          schema-registry-cluster: schemaRegistryClusterId
+          ksql-cluster: ksqlClusterId
+          connect-cluster: connectClusterId
+      properties:
+        clusters:
+          $ref: '#/components/schemas/Scope_clusters'
+      required:
+      - clusters
+      type: object
+    MdsScope:
+      example:
+        clusterName: StagingCluster
+        clusters:
+          kafka-cluster: kafkaClusterId
+          schema-registry-cluster: schemaRegistryClusterId
+          ksql-cluster: ksqlClusterId
+          connect-cluster: connectClusterId
+      properties:
+        clusterName:
+          example: StagingCluster
+          type: string
+        clusters:
+          $ref: '#/components/schemas/MdsScope_clusters'
+      type: object
+    AccessPolicy:
+      example:
+        allowedOperations:
+        - resourceType: Topic
+          operations:
+          - Read
+          - Write
+          - Describe
+          - DescribeConfigs
+        - resourceType: Topic
+          operations:
+          - Read
+          - Write
+          - Describe
+          - DescribeConfigs
+        scopeType: Resource
+      properties:
+        scopeType:
+          example: Resource
+          pattern: Cluster|Resource
+          type: string
+        allowedOperations:
+          items:
+            $ref: '#/components/schemas/Operation'
+          type: array
+      type: object
+    Role:
+      example:
+        name: DeveloperRead
+        accessPolicy:
+          allowedOperations:
+          - resourceType: Topic
+            operations:
+            - Read
+            - Write
+            - Describe
+            - DescribeConfigs
+          - resourceType: Topic
+            operations:
+            - Read
+            - Write
+            - Describe
+            - DescribeConfigs
+          scopeType: Resource
+      properties:
+        name:
+          example: DeveloperRead
+          type: string
+        accessPolicy:
+          $ref: '#/components/schemas/AccessPolicy'
+      type: object
+    ResourcePattern:
+      example:
+        name: clicksTopic1
+        patternType: LITERAL
+        resourceType: Topic
+      properties:
+        resourceType:
+          example: Topic
+          type: string
+        name:
+          example: clicksTopic1
+          type: string
+        patternType:
+          example: LITERAL
+          pattern: (^LITERAL$)|(^PREFIXED$)
+          type: string
+      required:
+      - name
+      - patternType
+      - resourceType
+      type: object
+    Operation:
+      example:
+        resourceType: Topic
+        operations:
+        - Read
+        - Write
+        - Describe
+        - DescribeConfigs
+      properties:
+        resourceType:
+          type: string
+        operations:
+          items:
+            type: string
+          type: array
+      type: object
+    AuthenticationResponse:
+      example:
+        auth_token: auth_token
+        token_type: token_type
+        expires_in: 0.8008281904610115
+      properties:
+        auth_token:
+          type: string
+        token_type:
+          type: string
+        expires_in:
+          type: number
+      type: object
+    ErrorResponse:
+      properties:
+        status_code:
+          description: Optional - http status code
+          example: 400
+          type: integer
+        error_code:
+          description: Optional - Kafka error code (typically 5 digits)
+          type: integer
+        type:
+          description: Optional - Type of error
+          example: INVALID REQUEST DATA
+          type: string
+        message:
+          description: Required - Top level error message
+          example: Bad request
+          type: string
+        errors:
+          description: Optional - List of errors
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+      required:
+      - message
+      type: object
+    ErrorDetail:
+      properties:
+        error_type:
+          type: string
+        message:
+          type: string
+      required:
+      - error_type
+      - type
+      type: object
+    CreateAclRequest:
+      example:
+        aclBinding:
+          entry:
+            principal: User:bob
+            permissionType: ALLOW
+            host: host
+            operation: ALL
+          pattern:
+            name: clicksTopic1
+            patternType: LITERAL
+            resourceType: TOPIC
+        scope:
+          clusters:
+            kafka-cluster: kafka-cluster
+      properties:
+        scope:
+          $ref: '#/components/schemas/KafkaScope'
+        aclBinding:
+          $ref: '#/components/schemas/AclBinding'
+      required:
+      - aclBinding
+      - scope
+      type: object
+    AclBindings:
+      items:
+        $ref: '#/components/schemas/AclBinding'
+      type: array
+    AclBinding:
+      example:
+        entry:
+          principal: User:bob
+          permissionType: ALLOW
+          host: host
+          operation: ALL
+        pattern:
+          name: clicksTopic1
+          patternType: LITERAL
+          resourceType: TOPIC
+      properties:
+        pattern:
+          $ref: '#/components/schemas/KafkaResourcePattern'
+        entry:
+          $ref: '#/components/schemas/AccessControlEntry'
+      required:
+      - entry
+      - pattern
+      type: object
+    AclFilterRequest:
+      example:
+        scope:
+          clusters:
+            kafka-cluster: kafka-cluster
+        aclBindingFilter:
+          patternFilter:
+            name: clicksTopic1
+            patternType: LITERAL
+            resourceType: TOPIC
+          entryFilter:
+            principal: principal
+            permissionType: ALLOW
+            host: host
+            operation: ALL
+      properties:
+        scope:
+          $ref: '#/components/schemas/KafkaScope'
+        aclBindingFilter:
+          $ref: '#/components/schemas/AclBindingFilter'
+      required:
+      - aclBindingFilter
+      - scope
+      type: object
+    AclBindingFilter:
+      example:
+        patternFilter:
+          name: clicksTopic1
+          patternType: LITERAL
+          resourceType: TOPIC
+        entryFilter:
+          principal: principal
+          permissionType: ALLOW
+          host: host
+          operation: ALL
+      properties:
+        patternFilter:
+          $ref: '#/components/schemas/KafkaResourcePatternFilter'
+        entryFilter:
+          $ref: '#/components/schemas/AccessControlEntryFilter'
+      required:
+      - entryFilter
+      - patternFilter
+      type: object
+    AclResourceType:
+      enum:
+      - UNKNOWN
+      - ANY
+      - TOPIC
+      - GROUP
+      - CLUSTER
+      - TRANSACTIONAL_ID
+      example: TOPIC
+      type: string
+    PatternType:
+      enum:
+      - UNKNOWN
+      - ANY
+      - MATCH
+      - LITERAL
+      - PREFIXED
+      example: LITERAL
+      type: string
+    AclPermissionType:
+      enum:
+      - UNKNOWN
+      - ANY
+      - DENY
+      - ALLOW
+      example: ALLOW
+      type: string
+    AclOperation:
+      enum:
+      - UNKNOWN
+      - ANY
+      - ALL
+      - READ
+      - WRITE
+      - CREATE
+      - DELETE
+      - ALTER
+      - DESCRIBE
+      - CLUSTER_ACTION
+      - DESCRIBE_CONFIGS
+      - ALTER_CONFIGS
+      - IDEMPOTENT_WRITE
+      example: ALL
+      type: string
+    Protocol:
+      enum:
+      - SASL_PLAINTEXT
+      - SASL_SSL
+      - HTTP
+      - HTTPS
+      example: SASL_PLAINTEXT
+      type: string
+    KafkaScope:
+      example:
+        clusters:
+          kafka-cluster: kafka-cluster
+      properties:
+        clusters:
+          $ref: '#/components/schemas/KafkaScope_clusters'
+      required:
+      - clusters
+      type: object
+    KafkaResourcePattern:
+      example:
+        name: clicksTopic1
+        patternType: LITERAL
+        resourceType: TOPIC
+      properties:
+        resourceType:
+          $ref: '#/components/schemas/AclResourceType'
+        name:
+          example: clicksTopic1
+          type: string
+        patternType:
+          $ref: '#/components/schemas/PatternType'
+      required:
+      - name
+      - patternType
+      - resourceType
+      type: object
+    AccessControlEntry:
+      example:
+        principal: User:bob
+        permissionType: ALLOW
+        host: host
+        operation: ALL
+      properties:
+        principal:
+          example: User:bob
+          pattern: ^User:.+$
+          type: string
+        host:
+          type: string
+        operation:
+          $ref: '#/components/schemas/AclOperation'
+        permissionType:
+          $ref: '#/components/schemas/AclPermissionType'
+      required:
+      - host
+      - operation
+      - permissionType
+      - principal
+      type: object
+    KafkaResourcePatternFilter:
+      example:
+        name: clicksTopic1
+        patternType: LITERAL
+        resourceType: TOPIC
+      properties:
+        resourceType:
+          $ref: '#/components/schemas/AclResourceType'
+        name:
+          example: clicksTopic1
+          type: string
+        patternType:
+          $ref: '#/components/schemas/PatternType'
+      required:
+      - patternType
+      - resourceType
+      type: object
+    AccessControlEntryFilter:
+      example:
+        principal: principal
+        permissionType: ALLOW
+        host: host
+        operation: ALL
+      properties:
+        principal:
+          pattern: ^User:.+$
+          type: string
+        host:
+          type: string
+        operation:
+          $ref: '#/components/schemas/AclOperation'
+        permissionType:
+          $ref: '#/components/schemas/AclPermissionType'
+      required:
+      - operation
+      - permissionType
+      type: object
+    Scope_clusters:
+      example:
+        kafka-cluster: kafkaClusterId
+        schema-registry-cluster: schemaRegistryClusterId
+        ksql-cluster: ksqlClusterId
+        connect-cluster: connectClusterId
+      properties:
+        kafka-cluster:
+          example: kafkaClusterId
+          type: string
+        connect-cluster:
+          example: connectClusterId
+          type: string
+        ksql-cluster:
+          example: ksqlClusterId
+          type: string
+        schema-registry-cluster:
+          example: schemaRegistryClusterId
+          type: string
+      required:
+      - kafka-cluster
+      type: object
+    MdsScope_clusters:
+      example:
+        kafka-cluster: kafkaClusterId
+        schema-registry-cluster: schemaRegistryClusterId
+        ksql-cluster: ksqlClusterId
+        connect-cluster: connectClusterId
+      properties:
+        kafka-cluster:
+          example: kafkaClusterId
+          type: string
+        connect-cluster:
+          example: connectClusterId
+          type: string
+        ksql-cluster:
+          example: ksqlClusterId
+          type: string
+        schema-registry-cluster:
+          example: schemaRegistryClusterId
+          type: string
+      type: object
+    KafkaScope_clusters:
+      example:
+        kafka-cluster: kafka-cluster
+      properties:
+        kafka-cluster:
+          type: string
+      required:
+      - kafka-cluster
+      type: object
+  securitySchemes:
+    basicAuth:
+      scheme: basic
+      type: http
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http

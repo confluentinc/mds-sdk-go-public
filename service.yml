@@ -1,0 +1,15 @@
+name: mds-sdk-go-public
+lang: unknown
+lang_version: unknown
+git:
+  enable: true
+github:
+  enable: true
+  repo_name: confluentinc/mds-sdk-go-public
+semaphore:
+  enable: true
+  pipeline_enable: false
+  triggers:
+  - tags
+  - branches
+  branches: []

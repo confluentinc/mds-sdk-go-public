@@ -1,0 +1,56 @@
+---
+version: v1.0
+name: mds-sdk-go
+agent:
+  machine:
+    type: s1-prod-ubuntu20-04-amd64-1
+auto_cancel:
+  running:
+    when: "true"
+global_job_config:
+  env_vars:
+    - name: SEMAPHORE_TRIGGER_SOURCE
+      value: push
+  secrets:
+    - name: vault_sem2_approle
+  prologue:
+    commands:
+      - sem-version go 1.16.3
+      - export "GOPATH=$(go env GOPATH)"
+      - >-
+        export
+        "SEMAPHORE_GIT_DIR=${GOPATH}/src/github.com/confluentinc/${SEMAPHORE_PROJECT_NAME}"
+      - 'export "PATH=${GOPATH}/bin:${PATH}"'
+      - 'mkdir -vp "${SEMAPHORE_GIT_DIR}" "${GOPATH}/bin"'
+      - >-
+        git config --global url."git@github.com:".insteadOf
+        "https://github.com/"
+      - export SEMAPHORE_CACHE_DIR=/home/semaphore
+      - checkout
+      - make install-vault
+      - . mk-include/bin/vault-setup
+        # Default sshkey is read-only. Add ssh key with write access
+      - . vault-sem-get-secret ssh_id_rsa
+      - . vault-sem-get-secret gitconfig
+      - chmod 400 ~/.ssh/id_rsa
+      - exec &> >(tee -a build.log)
+blocks:
+  - name: Build
+    dependencies: []
+    task:
+      jobs:
+        - name: Build, Test & Release
+          commands:
+            - sem-version go 1.16.3
+            - make deps
+            - make lint
+            - make test
+  - name: Release
+    dependencies: ["Build"]
+    task:
+      jobs:
+        - name: release job
+          commands:
+            - make release-ci
+    skip:
+      when: "branch != 'master' AND branch !~ '^v.+$'"
