@@ -32,7 +32,6 @@ cd ..
 cd $ORIGIN_DIR
 go install github.com/travisjeffery/mocker/cmd/mocker@latest
 
-./generate.sh `pwd`/../openapi-generator-cli.jar ./mdsv2alpha1 `pwd`/../metadata-service/rbac-api-server/src/main/resources/WEB-INF/openapi/mds-spec-v2alpha1.yaml
 ./generate.sh `pwd`/../openapi-generator-cli.jar ./mdsv1 `pwd`/../metadata-service/rbac-api-server/src/main/resources/WEB-INF/openapi/mds-spec-1_0.yaml
 cd $ORIGIN_DIR
 git remote set-url origin git@github.com:confluentinc/mds-sdk-go.git

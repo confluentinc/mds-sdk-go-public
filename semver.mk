@@ -82,8 +82,6 @@ tag-release:
 	# tag mds versions
 	git tag -d mdsv1/$(BUMPED_VERSION) || true
 	git tag mdsv1/$(BUMPED_VERSION)
-	git tag -d mdsv2alpha1/$(BUMPED_VERSION) || true
-	git tag mdsv2alpha1/$(BUMPED_VERSION)
 	git push $(GIT_REMOTE_NAME) $(RELEASE_BRANCH) --tags
 
 .PHONY: get-release-image
