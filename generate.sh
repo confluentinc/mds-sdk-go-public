@@ -24,12 +24,12 @@ which mocker > /dev/null || (printhdr "Installing mocker"; go install github.com
 printhdr "Removing all files under $(pwd)"
 find . ! '(' -name 'Makefile' -o -name '.' ')' -maxdepth 1 -print0 | xargs -0 rm -rf
 
-printhdr "\nGenerating mds-sdk-go"
+printhdr "\nGenerating mds-sdk-go-public"
 java -ea ${JAVA_OPTS} -Xms512M -Xmx1024M -server \
   -jar ${openapiPath} generate \
   --input-spec ${mdsPath} \
   --api-package ${version} --package-name ${version} --generator-name go-deprecated \
-  --git-user-id confluentinc --git-repo-id mds-sdk-go \
+  --git-user-id confluentinc --git-repo-id mds-sdk-go-public \
   --additional-properties generateInterfaces=true,enumClassPrefix=true,isGoSubmodule=true
 
 printhdr "\nGenerating mocks"

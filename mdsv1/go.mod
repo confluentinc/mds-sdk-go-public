@@ -1,4 +1,4 @@
-module github.com/confluentinc/mds-sdk-go/mdsv1
+module github.com/confluentinc/mds-sdk-go-public/mdsv1
 
 require (
 	github.com/antihax/optional v1.0.0

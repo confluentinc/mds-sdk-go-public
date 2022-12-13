@@ -16,7 +16,7 @@ def body = {
 def config = jobConfig(body, defaultConfig)
 
 def job = {
-    stage('Validate mds-sdk-go') {
+    stage('Validate mds-sdk-go-public') {
         configureGitSSH("github/confluent_jenkins", "private_key")
         withVaultEnv([["github/jenkins_gh_config", "user", "GITHUB_CLI_USER"], ["github/jenkins_gh_config", "oauth_token", "GITHUB_CLI_OAUTH_TOKEN"]]) {
             sh '''#!/bin/bash
@@ -32,7 +32,7 @@ def job = {
                     MDS_HASH=$(gh api repos/confluentinc/metadata-service/pulls/$MDS_PR/commits | jq -r '.[length-1] | .sha')
                     STATUS=$([[ -z ${diff} ]] && echo "success" || echo "failure")
                     STATUS_PAST=$([[ -z ${diff} ]] && echo "succeeded" || echo "failed")
-                    echo "{ \\"state\\": \\"$STATUS\\", \\"target_url\\": \\"https://github.com/confluentinc/mds-sdk-go/pull/$CHANGE_ID\\", \\"description\\": \\"The mds-sdk-go build $STATUS_PAST\\", \\"context\\": \\"mds-sdk-go build status\\" }" > status
+                    echo "{ \\"state\\": \\"$STATUS\\", \\"target_url\\": \\"https://github.com/confluentinc/mds-sdk-go-public/pull/$CHANGE_ID\\", \\"description\\": \\"The mds-sdk-go-public build $STATUS_PAST\\", \\"context\\": \\"mds-sdk-go-public build status\\" }" > status
                     cat status
                     gh api repos/confluentinc/metadata-service/statuses/$MDS_HASH -X POST --input status
                     rm status

@@ -1,6 +1,6 @@
 ---
 version: v1.0
-name: mds-sdk-go
+name: mds-sdk-go-public
 agent:
   machine:
     type: s1-prod-ubuntu20-04-amd64-1
@@ -15,7 +15,7 @@ global_job_config:
     - name: vault_sem2_approle
   prologue:
     commands:
-      - sem-version go 1.16.3
+      - sem-version go $(cat .go-version)
       - export "GOPATH=$(go env GOPATH)"
       - >-
         export
@@ -41,7 +41,7 @@ blocks:
       jobs:
         - name: Build, Test & Release
           commands:
-            - sem-version go 1.16.3
+            - sem-version go $(cat .go-version)
             - make deps
             - make lint
             - make test

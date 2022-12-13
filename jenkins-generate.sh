@@ -18,9 +18,9 @@ export PATH=`pwd`/go/bin:`pwd`/gh_0.11.0_linux_amd64/bin:$PATH
 export GOPATH=`pwd`/go
 
 # If this jenkins script is run by a MDS PR, the cloned MDS repo should match that PR
-# If this jenkins script is run by a mds-sdk-go PR, the cloned MDS repo should match the MDS PR that created the mds-sdk-go PR (if any)
+# If this jenkins script is run by a mds-sdk-go-public PR, the cloned MDS repo should match the MDS PR that created the mds-sdk-go-public PR (if any)
 cd metadata-service
-if [[ $CHANGE_URL == *mds-sdk-go* ]] && [[ $CHANGE_BRANCH == mds-pr-* ]]; then
+if [[ $CHANGE_URL == *mds-sdk-go-public* ]] && [[ $CHANGE_BRANCH == mds-pr-* ]]; then
     MDS_PR=${CHANGE_BRANCH#"mds-pr-"}
     gh pr checkout $MDS_PR
 fi
@@ -34,5 +34,5 @@ go install github.com/travisjeffery/mocker/cmd/mocker@latest
 
 ./generate.sh `pwd`/../openapi-generator-cli.jar ./mdsv1 `pwd`/../metadata-service/rbac-api-server/src/main/resources/WEB-INF/openapi/mds-spec-1_0.yaml
 cd $ORIGIN_DIR
-git remote set-url origin git@github.com:confluentinc/mds-sdk-go.git
+git remote set-url origin git@github.com:confluentinc/mds-sdk-go-public.git
 
