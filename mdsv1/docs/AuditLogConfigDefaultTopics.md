@@ -1,0 +1,12 @@
+# AuditLogConfigDefaultTopics
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**Allowed** | **string** | The name of one of the destination Kafka topics, defined elsewhere in the audit log configuration, that shall receive messages about attempted actions when they are \&quot;allowed\&quot; by the system based on security access policies.  You can set this value to an empty string instead, to discard the \&quot;allowed\&quot; events routed here. The empty string is the only valid value other than one of the Kafka topic names in the spec&#39;s &#x60;&#x60;destinations&#x60;&#x60; section.  This field specifies the default destination for events related to \&quot;allowed\&quot; actions in the following categories: &#x60;&#x60;authentication&#x60;&#x60;, &#x60;&#x60;management&#x60;&#x60;, and &#x60;&#x60;authorize&#x60;&#x60;. All other event categories are discarded by default. Events only follow the default behavior if they do not match any of the audit log configuration &#x60;&#x60;routes&#x60;&#x60; CRN patterns, or if their selected route omits (or leaves &#x60;&#x60;null&#x60;&#x60;) the destination topic.  | 
+**Denied** | **string** | The name of one of the destination Kafka topics, defined elsewhere in the audit log configuration, that shall receive messages about attempted actions when they are \&quot;denied\&quot; by the system based on security access policies.  You can set this value to an empty string instead, to discard the \&quot;denied\&quot; events routed here.The empty string is the only valid value other than one of the Kafka topic names in the spec&#39;s &#x60;&#x60;destinations&#x60;&#x60; section.  This field specifies the default destination for events related to \&quot;denied\&quot; actions in the following categories: &#x60;&#x60;authentication&#x60;&#x60;, &#x60;&#x60;management&#x60;&#x60;, and &#x60;&#x60;authorize&#x60;&#x60;. All other event categories are discarded by default. Events only follow the default behavior if they do not match any of the audit log configuration &#x60;&#x60;routes&#x60;&#x60; CRN patterns, or if their selected route omits (or leaves &#x60;&#x60;null&#x60;&#x60;) the destination topic.  | 
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+

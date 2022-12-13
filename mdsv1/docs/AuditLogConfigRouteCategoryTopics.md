@@ -1,0 +1,12 @@
+# AuditLogConfigRouteCategoryTopics
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**Allowed** | Pointer to **string** | The name of one of the destination Kafka topics, defined elsewhere in the audit log configuration, that shall receive messages about attempted actions when they are \&quot;allowed\&quot; by the system based on security access policies.  You can set this value to an empty string, to discard the events instead.  You can set this value to &#x60;&#x60;null&#x60;&#x60; (or omit this property) to use the default behavior. By default the &#x60;&#x60;authentication&#x60;&#x60;, &#x60;&#x60;authorize&#x60;&#x60;, and &#x60;&#x60;management&#x60;&#x60; categories of events are routed according to the destination specified in &#x60;&#x60;default_topics&#x60;&#x60;. Events in all other categories are discarded by default.  The empty string or a &#x60;&#x60;null&#x60;&#x60; value are the only valid values other than one of the defined destination Kafka topic names.  This route will only be selected for an event if the routing rule&#39;s CRN pattern matches the event&#39;s associated resource CRN, and its CRN pattern is the most specific among those that match the event.  | 
+**Denied** | Pointer to **string** | The name of one of the destination Kafka topics, defined elsewhere in the audit log configuration, that shall receive messages about attempted actions when they are \&quot;denied\&quot; by the system based on security access policies.  You can set this value to an empty string, to discard the events instead.  You can set this value to &#x60;&#x60;null&#x60;&#x60; (or omit this property) to use the default behavior. By default the &#x60;&#x60;authentication&#x60;&#x60;, &#x60;&#x60;authorize&#x60;&#x60;, and &#x60;&#x60;management&#x60;&#x60; categories of events are routed according to the destination specified in &#x60;&#x60;default_topics&#x60;&#x60;. Events in all other categories are discarded by default.  The empty string or a &#x60;&#x60;null&#x60;&#x60; value are the only valid values other than one of the defined destination Kafka topic names.  This route will only be selected for an event if the routing rule&#39;s CRN pattern matches the event&#39;s associated resource CRN, and its CRN pattern is the most specific among those that match the event.  | 
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+
