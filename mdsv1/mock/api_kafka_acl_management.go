@@ -9,38 +9,38 @@ import (
 	net_http "net/http"
 	sync "sync"
 
-	github_com_confluentinc_mds_sdk_go_mdsv1 "github.com/confluentinc/mds-sdk-go/mdsv1"
+	github_com_confluentinc_mds_sdk_go_public_mdsv1 "github.com/confluentinc/mds-sdk-go-public/mdsv1"
 )
 
 // KafkaACLManagementApi is a mock of KafkaACLManagementApi interface
 type KafkaACLManagementApi struct {
 	lockAddAclBinding sync.Mutex
-	AddAclBindingFunc func(ctx context.Context, createAclRequest github_com_confluentinc_mds_sdk_go_mdsv1.CreateAclRequest) (*net_http.Response, error)
+	AddAclBindingFunc func(ctx context.Context, createAclRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.CreateAclRequest) (*net_http.Response, error)
 
 	lockRemoveAclBindings sync.Mutex
-	RemoveAclBindingsFunc func(ctx context.Context, aclFilterRequest github_com_confluentinc_mds_sdk_go_mdsv1.AclFilterRequest) ([]github_com_confluentinc_mds_sdk_go_mdsv1.AclBinding, *net_http.Response, error)
+	RemoveAclBindingsFunc func(ctx context.Context, aclFilterRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.AclFilterRequest) ([]github_com_confluentinc_mds_sdk_go_public_mdsv1.AclBinding, *net_http.Response, error)
 
 	lockSearchAclBinding sync.Mutex
-	SearchAclBindingFunc func(ctx context.Context, aclFilterRequest github_com_confluentinc_mds_sdk_go_mdsv1.AclFilterRequest) ([]github_com_confluentinc_mds_sdk_go_mdsv1.AclBinding, *net_http.Response, error)
+	SearchAclBindingFunc func(ctx context.Context, aclFilterRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.AclFilterRequest) ([]github_com_confluentinc_mds_sdk_go_public_mdsv1.AclBinding, *net_http.Response, error)
 
 	calls struct {
 		AddAclBinding []struct {
 			Ctx              context.Context
-			CreateAclRequest github_com_confluentinc_mds_sdk_go_mdsv1.CreateAclRequest
+			CreateAclRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.CreateAclRequest
 		}
 		RemoveAclBindings []struct {
 			Ctx              context.Context
-			AclFilterRequest github_com_confluentinc_mds_sdk_go_mdsv1.AclFilterRequest
+			AclFilterRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.AclFilterRequest
 		}
 		SearchAclBinding []struct {
 			Ctx              context.Context
-			AclFilterRequest github_com_confluentinc_mds_sdk_go_mdsv1.AclFilterRequest
+			AclFilterRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.AclFilterRequest
 		}
 	}
 }
 
 // AddAclBinding mocks base method by wrapping the associated func.
-func (m *KafkaACLManagementApi) AddAclBinding(ctx context.Context, createAclRequest github_com_confluentinc_mds_sdk_go_mdsv1.CreateAclRequest) (*net_http.Response, error) {
+func (m *KafkaACLManagementApi) AddAclBinding(ctx context.Context, createAclRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.CreateAclRequest) (*net_http.Response, error) {
 	m.lockAddAclBinding.Lock()
 	defer m.lockAddAclBinding.Unlock()
 
@@ -50,7 +50,7 @@ func (m *KafkaACLManagementApi) AddAclBinding(ctx context.Context, createAclRequ
 
 	call := struct {
 		Ctx              context.Context
-		CreateAclRequest github_com_confluentinc_mds_sdk_go_mdsv1.CreateAclRequest
+		CreateAclRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.CreateAclRequest
 	}{
 		Ctx:              ctx,
 		CreateAclRequest: createAclRequest,
@@ -72,7 +72,7 @@ func (m *KafkaACLManagementApi) AddAclBindingCalled() bool {
 // AddAclBindingCalls returns the calls made to AddAclBinding.
 func (m *KafkaACLManagementApi) AddAclBindingCalls() []struct {
 	Ctx              context.Context
-	CreateAclRequest github_com_confluentinc_mds_sdk_go_mdsv1.CreateAclRequest
+	CreateAclRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.CreateAclRequest
 } {
 	m.lockAddAclBinding.Lock()
 	defer m.lockAddAclBinding.Unlock()
@@ -81,7 +81,7 @@ func (m *KafkaACLManagementApi) AddAclBindingCalls() []struct {
 }
 
 // RemoveAclBindings mocks base method by wrapping the associated func.
-func (m *KafkaACLManagementApi) RemoveAclBindings(ctx context.Context, aclFilterRequest github_com_confluentinc_mds_sdk_go_mdsv1.AclFilterRequest) ([]github_com_confluentinc_mds_sdk_go_mdsv1.AclBinding, *net_http.Response, error) {
+func (m *KafkaACLManagementApi) RemoveAclBindings(ctx context.Context, aclFilterRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.AclFilterRequest) ([]github_com_confluentinc_mds_sdk_go_public_mdsv1.AclBinding, *net_http.Response, error) {
 	m.lockRemoveAclBindings.Lock()
 	defer m.lockRemoveAclBindings.Unlock()
 
@@ -91,7 +91,7 @@ func (m *KafkaACLManagementApi) RemoveAclBindings(ctx context.Context, aclFilter
 
 	call := struct {
 		Ctx              context.Context
-		AclFilterRequest github_com_confluentinc_mds_sdk_go_mdsv1.AclFilterRequest
+		AclFilterRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.AclFilterRequest
 	}{
 		Ctx:              ctx,
 		AclFilterRequest: aclFilterRequest,
@@ -113,7 +113,7 @@ func (m *KafkaACLManagementApi) RemoveAclBindingsCalled() bool {
 // RemoveAclBindingsCalls returns the calls made to RemoveAclBindings.
 func (m *KafkaACLManagementApi) RemoveAclBindingsCalls() []struct {
 	Ctx              context.Context
-	AclFilterRequest github_com_confluentinc_mds_sdk_go_mdsv1.AclFilterRequest
+	AclFilterRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.AclFilterRequest
 } {
 	m.lockRemoveAclBindings.Lock()
 	defer m.lockRemoveAclBindings.Unlock()
@@ -122,7 +122,7 @@ func (m *KafkaACLManagementApi) RemoveAclBindingsCalls() []struct {
 }
 
 // SearchAclBinding mocks base method by wrapping the associated func.
-func (m *KafkaACLManagementApi) SearchAclBinding(ctx context.Context, aclFilterRequest github_com_confluentinc_mds_sdk_go_mdsv1.AclFilterRequest) ([]github_com_confluentinc_mds_sdk_go_mdsv1.AclBinding, *net_http.Response, error) {
+func (m *KafkaACLManagementApi) SearchAclBinding(ctx context.Context, aclFilterRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.AclFilterRequest) ([]github_com_confluentinc_mds_sdk_go_public_mdsv1.AclBinding, *net_http.Response, error) {
 	m.lockSearchAclBinding.Lock()
 	defer m.lockSearchAclBinding.Unlock()
 
@@ -132,7 +132,7 @@ func (m *KafkaACLManagementApi) SearchAclBinding(ctx context.Context, aclFilterR
 
 	call := struct {
 		Ctx              context.Context
-		AclFilterRequest github_com_confluentinc_mds_sdk_go_mdsv1.AclFilterRequest
+		AclFilterRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.AclFilterRequest
 	}{
 		Ctx:              ctx,
 		AclFilterRequest: aclFilterRequest,
@@ -154,7 +154,7 @@ func (m *KafkaACLManagementApi) SearchAclBindingCalled() bool {
 // SearchAclBindingCalls returns the calls made to SearchAclBinding.
 func (m *KafkaACLManagementApi) SearchAclBindingCalls() []struct {
 	Ctx              context.Context
-	AclFilterRequest github_com_confluentinc_mds_sdk_go_mdsv1.AclFilterRequest
+	AclFilterRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.AclFilterRequest
 } {
 	m.lockSearchAclBinding.Lock()
 	defer m.lockSearchAclBinding.Unlock()

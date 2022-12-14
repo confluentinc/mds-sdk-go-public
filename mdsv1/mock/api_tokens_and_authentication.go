@@ -9,13 +9,13 @@ import (
 	net_http "net/http"
 	sync "sync"
 
-	github_com_confluentinc_mds_sdk_go_mdsv1 "github.com/confluentinc/mds-sdk-go/mdsv1"
+	github_com_confluentinc_mds_sdk_go_public_mdsv1 "github.com/confluentinc/mds-sdk-go-public/mdsv1"
 )
 
 // TokensAndAuthenticationApi is a mock of TokensAndAuthenticationApi interface
 type TokensAndAuthenticationApi struct {
 	lockGetToken sync.Mutex
-	GetTokenFunc func(ctx context.Context) (github_com_confluentinc_mds_sdk_go_mdsv1.AuthenticationResponse, *net_http.Response, error)
+	GetTokenFunc func(ctx context.Context) (github_com_confluentinc_mds_sdk_go_public_mdsv1.AuthenticationResponse, *net_http.Response, error)
 
 	calls struct {
 		GetToken []struct {
@@ -25,7 +25,7 @@ type TokensAndAuthenticationApi struct {
 }
 
 // GetToken mocks base method by wrapping the associated func.
-func (m *TokensAndAuthenticationApi) GetToken(ctx context.Context) (github_com_confluentinc_mds_sdk_go_mdsv1.AuthenticationResponse, *net_http.Response, error) {
+func (m *TokensAndAuthenticationApi) GetToken(ctx context.Context) (github_com_confluentinc_mds_sdk_go_public_mdsv1.AuthenticationResponse, *net_http.Response, error) {
 	m.lockGetToken.Lock()
 	defer m.lockGetToken.Unlock()
 

@@ -9,22 +9,22 @@ import (
 	net_http "net/http"
 	sync "sync"
 
-	github_com_confluentinc_mds_sdk_go_mdsv1 "github.com/confluentinc/mds-sdk-go/mdsv1"
+	github_com_confluentinc_mds_sdk_go_public_mdsv1 "github.com/confluentinc/mds-sdk-go-public/mdsv1"
 )
 
 // AuditLogConfigurationApi is a mock of AuditLogConfigurationApi interface
 type AuditLogConfigurationApi struct {
 	lockGetConfig sync.Mutex
-	GetConfigFunc func(ctx context.Context) (github_com_confluentinc_mds_sdk_go_mdsv1.AuditLogConfigSpec, *net_http.Response, error)
+	GetConfigFunc func(ctx context.Context) (github_com_confluentinc_mds_sdk_go_public_mdsv1.AuditLogConfigSpec, *net_http.Response, error)
 
 	lockListRoutes sync.Mutex
-	ListRoutesFunc func(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ListRoutesOpts) (github_com_confluentinc_mds_sdk_go_mdsv1.AuditLogConfigListRoutesResponse, *net_http.Response, error)
+	ListRoutesFunc func(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ListRoutesOpts) (github_com_confluentinc_mds_sdk_go_public_mdsv1.AuditLogConfigListRoutesResponse, *net_http.Response, error)
 
 	lockPutConfig sync.Mutex
-	PutConfigFunc func(ctx context.Context, auditLogConfigSpec github_com_confluentinc_mds_sdk_go_mdsv1.AuditLogConfigSpec) (github_com_confluentinc_mds_sdk_go_mdsv1.AuditLogConfigSpec, *net_http.Response, error)
+	PutConfigFunc func(ctx context.Context, auditLogConfigSpec github_com_confluentinc_mds_sdk_go_public_mdsv1.AuditLogConfigSpec) (github_com_confluentinc_mds_sdk_go_public_mdsv1.AuditLogConfigSpec, *net_http.Response, error)
 
 	lockResolveResourceRoute sync.Mutex
-	ResolveResourceRouteFunc func(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ResolveResourceRouteOpts) (github_com_confluentinc_mds_sdk_go_mdsv1.AuditLogConfigResolveResourceRouteResponse, *net_http.Response, error)
+	ResolveResourceRouteFunc func(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ResolveResourceRouteOpts) (github_com_confluentinc_mds_sdk_go_public_mdsv1.AuditLogConfigResolveResourceRouteResponse, *net_http.Response, error)
 
 	calls struct {
 		GetConfig []struct {
@@ -32,21 +32,21 @@ type AuditLogConfigurationApi struct {
 		}
 		ListRoutes []struct {
 			Ctx               context.Context
-			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ListRoutesOpts
+			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ListRoutesOpts
 		}
 		PutConfig []struct {
 			Ctx                context.Context
-			AuditLogConfigSpec github_com_confluentinc_mds_sdk_go_mdsv1.AuditLogConfigSpec
+			AuditLogConfigSpec github_com_confluentinc_mds_sdk_go_public_mdsv1.AuditLogConfigSpec
 		}
 		ResolveResourceRoute []struct {
 			Ctx               context.Context
-			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ResolveResourceRouteOpts
+			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ResolveResourceRouteOpts
 		}
 	}
 }
 
 // GetConfig mocks base method by wrapping the associated func.
-func (m *AuditLogConfigurationApi) GetConfig(ctx context.Context) (github_com_confluentinc_mds_sdk_go_mdsv1.AuditLogConfigSpec, *net_http.Response, error) {
+func (m *AuditLogConfigurationApi) GetConfig(ctx context.Context) (github_com_confluentinc_mds_sdk_go_public_mdsv1.AuditLogConfigSpec, *net_http.Response, error) {
 	m.lockGetConfig.Lock()
 	defer m.lockGetConfig.Unlock()
 
@@ -84,7 +84,7 @@ func (m *AuditLogConfigurationApi) GetConfigCalls() []struct {
 }
 
 // ListRoutes mocks base method by wrapping the associated func.
-func (m *AuditLogConfigurationApi) ListRoutes(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ListRoutesOpts) (github_com_confluentinc_mds_sdk_go_mdsv1.AuditLogConfigListRoutesResponse, *net_http.Response, error) {
+func (m *AuditLogConfigurationApi) ListRoutes(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ListRoutesOpts) (github_com_confluentinc_mds_sdk_go_public_mdsv1.AuditLogConfigListRoutesResponse, *net_http.Response, error) {
 	m.lockListRoutes.Lock()
 	defer m.lockListRoutes.Unlock()
 
@@ -94,7 +94,7 @@ func (m *AuditLogConfigurationApi) ListRoutes(ctx context.Context, localVarOptio
 
 	call := struct {
 		Ctx               context.Context
-		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ListRoutesOpts
+		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ListRoutesOpts
 	}{
 		Ctx:               ctx,
 		LocalVarOptionals: localVarOptionals,
@@ -116,7 +116,7 @@ func (m *AuditLogConfigurationApi) ListRoutesCalled() bool {
 // ListRoutesCalls returns the calls made to ListRoutes.
 func (m *AuditLogConfigurationApi) ListRoutesCalls() []struct {
 	Ctx               context.Context
-	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ListRoutesOpts
+	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ListRoutesOpts
 } {
 	m.lockListRoutes.Lock()
 	defer m.lockListRoutes.Unlock()
@@ -125,7 +125,7 @@ func (m *AuditLogConfigurationApi) ListRoutesCalls() []struct {
 }
 
 // PutConfig mocks base method by wrapping the associated func.
-func (m *AuditLogConfigurationApi) PutConfig(ctx context.Context, auditLogConfigSpec github_com_confluentinc_mds_sdk_go_mdsv1.AuditLogConfigSpec) (github_com_confluentinc_mds_sdk_go_mdsv1.AuditLogConfigSpec, *net_http.Response, error) {
+func (m *AuditLogConfigurationApi) PutConfig(ctx context.Context, auditLogConfigSpec github_com_confluentinc_mds_sdk_go_public_mdsv1.AuditLogConfigSpec) (github_com_confluentinc_mds_sdk_go_public_mdsv1.AuditLogConfigSpec, *net_http.Response, error) {
 	m.lockPutConfig.Lock()
 	defer m.lockPutConfig.Unlock()
 
@@ -135,7 +135,7 @@ func (m *AuditLogConfigurationApi) PutConfig(ctx context.Context, auditLogConfig
 
 	call := struct {
 		Ctx                context.Context
-		AuditLogConfigSpec github_com_confluentinc_mds_sdk_go_mdsv1.AuditLogConfigSpec
+		AuditLogConfigSpec github_com_confluentinc_mds_sdk_go_public_mdsv1.AuditLogConfigSpec
 	}{
 		Ctx:                ctx,
 		AuditLogConfigSpec: auditLogConfigSpec,
@@ -157,7 +157,7 @@ func (m *AuditLogConfigurationApi) PutConfigCalled() bool {
 // PutConfigCalls returns the calls made to PutConfig.
 func (m *AuditLogConfigurationApi) PutConfigCalls() []struct {
 	Ctx                context.Context
-	AuditLogConfigSpec github_com_confluentinc_mds_sdk_go_mdsv1.AuditLogConfigSpec
+	AuditLogConfigSpec github_com_confluentinc_mds_sdk_go_public_mdsv1.AuditLogConfigSpec
 } {
 	m.lockPutConfig.Lock()
 	defer m.lockPutConfig.Unlock()
@@ -166,7 +166,7 @@ func (m *AuditLogConfigurationApi) PutConfigCalls() []struct {
 }
 
 // ResolveResourceRoute mocks base method by wrapping the associated func.
-func (m *AuditLogConfigurationApi) ResolveResourceRoute(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ResolveResourceRouteOpts) (github_com_confluentinc_mds_sdk_go_mdsv1.AuditLogConfigResolveResourceRouteResponse, *net_http.Response, error) {
+func (m *AuditLogConfigurationApi) ResolveResourceRoute(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ResolveResourceRouteOpts) (github_com_confluentinc_mds_sdk_go_public_mdsv1.AuditLogConfigResolveResourceRouteResponse, *net_http.Response, error) {
 	m.lockResolveResourceRoute.Lock()
 	defer m.lockResolveResourceRoute.Unlock()
 
@@ -176,7 +176,7 @@ func (m *AuditLogConfigurationApi) ResolveResourceRoute(ctx context.Context, loc
 
 	call := struct {
 		Ctx               context.Context
-		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ResolveResourceRouteOpts
+		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ResolveResourceRouteOpts
 	}{
 		Ctx:               ctx,
 		LocalVarOptionals: localVarOptionals,
@@ -198,7 +198,7 @@ func (m *AuditLogConfigurationApi) ResolveResourceRouteCalled() bool {
 // ResolveResourceRouteCalls returns the calls made to ResolveResourceRoute.
 func (m *AuditLogConfigurationApi) ResolveResourceRouteCalls() []struct {
 	Ctx               context.Context
-	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ResolveResourceRouteOpts
+	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ResolveResourceRouteOpts
 } {
 	m.lockResolveResourceRoute.Lock()
 	defer m.lockResolveResourceRoute.Unlock()

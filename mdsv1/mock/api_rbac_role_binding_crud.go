@@ -9,71 +9,71 @@ import (
 	net_http "net/http"
 	sync "sync"
 
-	github_com_confluentinc_mds_sdk_go_mdsv1 "github.com/confluentinc/mds-sdk-go/mdsv1"
+	github_com_confluentinc_mds_sdk_go_public_mdsv1 "github.com/confluentinc/mds-sdk-go-public/mdsv1"
 )
 
 // RBACRoleBindingCRUDApi is a mock of RBACRoleBindingCRUDApi interface
 type RBACRoleBindingCRUDApi struct {
 	lockAddRoleForPrincipal sync.Mutex
-	AddRoleForPrincipalFunc func(ctx context.Context, principal, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) (*net_http.Response, error)
+	AddRoleForPrincipalFunc func(ctx context.Context, principal, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) (*net_http.Response, error)
 
 	lockAddRoleResourcesForPrincipal sync.Mutex
-	AddRoleResourcesForPrincipalFunc func(ctx context.Context, principal, roleName string, resourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest) (*net_http.Response, error)
+	AddRoleResourcesForPrincipalFunc func(ctx context.Context, principal, roleName string, resourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest) (*net_http.Response, error)
 
 	lockDeleteRoleForPrincipal sync.Mutex
-	DeleteRoleForPrincipalFunc func(ctx context.Context, principal, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) (*net_http.Response, error)
+	DeleteRoleForPrincipalFunc func(ctx context.Context, principal, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) (*net_http.Response, error)
 
 	lockGetRoleResourcesForPrincipal sync.Mutex
-	GetRoleResourcesForPrincipalFunc func(ctx context.Context, principal, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) ([]github_com_confluentinc_mds_sdk_go_mdsv1.ResourcePattern, *net_http.Response, error)
+	GetRoleResourcesForPrincipalFunc func(ctx context.Context, principal, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) ([]github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcePattern, *net_http.Response, error)
 
 	lockRemoveRoleResourcesForPrincipal sync.Mutex
-	RemoveRoleResourcesForPrincipalFunc func(ctx context.Context, principal, roleName string, resourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest) (*net_http.Response, error)
+	RemoveRoleResourcesForPrincipalFunc func(ctx context.Context, principal, roleName string, resourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest) (*net_http.Response, error)
 
 	lockSetRoleResourcesForPrincipal sync.Mutex
-	SetRoleResourcesForPrincipalFunc func(ctx context.Context, principal, roleName string, resourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest) (*net_http.Response, error)
+	SetRoleResourcesForPrincipalFunc func(ctx context.Context, principal, roleName string, resourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest) (*net_http.Response, error)
 
 	calls struct {
 		AddRoleForPrincipal []struct {
 			Ctx       context.Context
 			Principal string
 			RoleName  string
-			MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+			MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 		}
 		AddRoleResourcesForPrincipal []struct {
 			Ctx              context.Context
 			Principal        string
 			RoleName         string
-			ResourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest
+			ResourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest
 		}
 		DeleteRoleForPrincipal []struct {
 			Ctx       context.Context
 			Principal string
 			RoleName  string
-			MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+			MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 		}
 		GetRoleResourcesForPrincipal []struct {
 			Ctx       context.Context
 			Principal string
 			RoleName  string
-			MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+			MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 		}
 		RemoveRoleResourcesForPrincipal []struct {
 			Ctx              context.Context
 			Principal        string
 			RoleName         string
-			ResourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest
+			ResourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest
 		}
 		SetRoleResourcesForPrincipal []struct {
 			Ctx              context.Context
 			Principal        string
 			RoleName         string
-			ResourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest
+			ResourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest
 		}
 	}
 }
 
 // AddRoleForPrincipal mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingCRUDApi) AddRoleForPrincipal(ctx context.Context, principal, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) (*net_http.Response, error) {
+func (m *RBACRoleBindingCRUDApi) AddRoleForPrincipal(ctx context.Context, principal, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) (*net_http.Response, error) {
 	m.lockAddRoleForPrincipal.Lock()
 	defer m.lockAddRoleForPrincipal.Unlock()
 
@@ -85,7 +85,7 @@ func (m *RBACRoleBindingCRUDApi) AddRoleForPrincipal(ctx context.Context, princi
 		Ctx       context.Context
 		Principal string
 		RoleName  string
-		MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+		MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 	}{
 		Ctx:       ctx,
 		Principal: principal,
@@ -111,7 +111,7 @@ func (m *RBACRoleBindingCRUDApi) AddRoleForPrincipalCalls() []struct {
 	Ctx       context.Context
 	Principal string
 	RoleName  string
-	MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+	MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 } {
 	m.lockAddRoleForPrincipal.Lock()
 	defer m.lockAddRoleForPrincipal.Unlock()
@@ -120,7 +120,7 @@ func (m *RBACRoleBindingCRUDApi) AddRoleForPrincipalCalls() []struct {
 }
 
 // AddRoleResourcesForPrincipal mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingCRUDApi) AddRoleResourcesForPrincipal(ctx context.Context, principal, roleName string, resourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest) (*net_http.Response, error) {
+func (m *RBACRoleBindingCRUDApi) AddRoleResourcesForPrincipal(ctx context.Context, principal, roleName string, resourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest) (*net_http.Response, error) {
 	m.lockAddRoleResourcesForPrincipal.Lock()
 	defer m.lockAddRoleResourcesForPrincipal.Unlock()
 
@@ -132,7 +132,7 @@ func (m *RBACRoleBindingCRUDApi) AddRoleResourcesForPrincipal(ctx context.Contex
 		Ctx              context.Context
 		Principal        string
 		RoleName         string
-		ResourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest
+		ResourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest
 	}{
 		Ctx:              ctx,
 		Principal:        principal,
@@ -158,7 +158,7 @@ func (m *RBACRoleBindingCRUDApi) AddRoleResourcesForPrincipalCalls() []struct {
 	Ctx              context.Context
 	Principal        string
 	RoleName         string
-	ResourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest
+	ResourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest
 } {
 	m.lockAddRoleResourcesForPrincipal.Lock()
 	defer m.lockAddRoleResourcesForPrincipal.Unlock()
@@ -167,7 +167,7 @@ func (m *RBACRoleBindingCRUDApi) AddRoleResourcesForPrincipalCalls() []struct {
 }
 
 // DeleteRoleForPrincipal mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingCRUDApi) DeleteRoleForPrincipal(ctx context.Context, principal, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) (*net_http.Response, error) {
+func (m *RBACRoleBindingCRUDApi) DeleteRoleForPrincipal(ctx context.Context, principal, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) (*net_http.Response, error) {
 	m.lockDeleteRoleForPrincipal.Lock()
 	defer m.lockDeleteRoleForPrincipal.Unlock()
 
@@ -179,7 +179,7 @@ func (m *RBACRoleBindingCRUDApi) DeleteRoleForPrincipal(ctx context.Context, pri
 		Ctx       context.Context
 		Principal string
 		RoleName  string
-		MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+		MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 	}{
 		Ctx:       ctx,
 		Principal: principal,
@@ -205,7 +205,7 @@ func (m *RBACRoleBindingCRUDApi) DeleteRoleForPrincipalCalls() []struct {
 	Ctx       context.Context
 	Principal string
 	RoleName  string
-	MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+	MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 } {
 	m.lockDeleteRoleForPrincipal.Lock()
 	defer m.lockDeleteRoleForPrincipal.Unlock()
@@ -214,7 +214,7 @@ func (m *RBACRoleBindingCRUDApi) DeleteRoleForPrincipalCalls() []struct {
 }
 
 // GetRoleResourcesForPrincipal mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingCRUDApi) GetRoleResourcesForPrincipal(ctx context.Context, principal, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) ([]github_com_confluentinc_mds_sdk_go_mdsv1.ResourcePattern, *net_http.Response, error) {
+func (m *RBACRoleBindingCRUDApi) GetRoleResourcesForPrincipal(ctx context.Context, principal, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) ([]github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcePattern, *net_http.Response, error) {
 	m.lockGetRoleResourcesForPrincipal.Lock()
 	defer m.lockGetRoleResourcesForPrincipal.Unlock()
 
@@ -226,7 +226,7 @@ func (m *RBACRoleBindingCRUDApi) GetRoleResourcesForPrincipal(ctx context.Contex
 		Ctx       context.Context
 		Principal string
 		RoleName  string
-		MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+		MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 	}{
 		Ctx:       ctx,
 		Principal: principal,
@@ -252,7 +252,7 @@ func (m *RBACRoleBindingCRUDApi) GetRoleResourcesForPrincipalCalls() []struct {
 	Ctx       context.Context
 	Principal string
 	RoleName  string
-	MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+	MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 } {
 	m.lockGetRoleResourcesForPrincipal.Lock()
 	defer m.lockGetRoleResourcesForPrincipal.Unlock()
@@ -261,7 +261,7 @@ func (m *RBACRoleBindingCRUDApi) GetRoleResourcesForPrincipalCalls() []struct {
 }
 
 // RemoveRoleResourcesForPrincipal mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingCRUDApi) RemoveRoleResourcesForPrincipal(ctx context.Context, principal, roleName string, resourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest) (*net_http.Response, error) {
+func (m *RBACRoleBindingCRUDApi) RemoveRoleResourcesForPrincipal(ctx context.Context, principal, roleName string, resourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest) (*net_http.Response, error) {
 	m.lockRemoveRoleResourcesForPrincipal.Lock()
 	defer m.lockRemoveRoleResourcesForPrincipal.Unlock()
 
@@ -273,7 +273,7 @@ func (m *RBACRoleBindingCRUDApi) RemoveRoleResourcesForPrincipal(ctx context.Con
 		Ctx              context.Context
 		Principal        string
 		RoleName         string
-		ResourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest
+		ResourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest
 	}{
 		Ctx:              ctx,
 		Principal:        principal,
@@ -299,7 +299,7 @@ func (m *RBACRoleBindingCRUDApi) RemoveRoleResourcesForPrincipalCalls() []struct
 	Ctx              context.Context
 	Principal        string
 	RoleName         string
-	ResourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest
+	ResourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest
 } {
 	m.lockRemoveRoleResourcesForPrincipal.Lock()
 	defer m.lockRemoveRoleResourcesForPrincipal.Unlock()
@@ -308,7 +308,7 @@ func (m *RBACRoleBindingCRUDApi) RemoveRoleResourcesForPrincipalCalls() []struct
 }
 
 // SetRoleResourcesForPrincipal mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingCRUDApi) SetRoleResourcesForPrincipal(ctx context.Context, principal, roleName string, resourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest) (*net_http.Response, error) {
+func (m *RBACRoleBindingCRUDApi) SetRoleResourcesForPrincipal(ctx context.Context, principal, roleName string, resourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest) (*net_http.Response, error) {
 	m.lockSetRoleResourcesForPrincipal.Lock()
 	defer m.lockSetRoleResourcesForPrincipal.Unlock()
 
@@ -320,7 +320,7 @@ func (m *RBACRoleBindingCRUDApi) SetRoleResourcesForPrincipal(ctx context.Contex
 		Ctx              context.Context
 		Principal        string
 		RoleName         string
-		ResourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest
+		ResourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest
 	}{
 		Ctx:              ctx,
 		Principal:        principal,
@@ -346,7 +346,7 @@ func (m *RBACRoleBindingCRUDApi) SetRoleResourcesForPrincipalCalls() []struct {
 	Ctx              context.Context
 	Principal        string
 	RoleName         string
-	ResourcesRequest github_com_confluentinc_mds_sdk_go_mdsv1.ResourcesRequest
+	ResourcesRequest github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcesRequest
 } {
 	m.lockSetRoleResourcesForPrincipal.Lock()
 	defer m.lockSetRoleResourcesForPrincipal.Unlock()

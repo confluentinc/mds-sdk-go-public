@@ -9,51 +9,51 @@ import (
 	net_http "net/http"
 	sync "sync"
 
-	github_com_confluentinc_mds_sdk_go_mdsv1 "github.com/confluentinc/mds-sdk-go/mdsv1"
+	github_com_confluentinc_mds_sdk_go_public_mdsv1 "github.com/confluentinc/mds-sdk-go-public/mdsv1"
 )
 
 // RBACRoleBindingSummariesApi is a mock of RBACRoleBindingSummariesApi interface
 type RBACRoleBindingSummariesApi struct {
 	lockLookupPrincipalsWithRole sync.Mutex
-	LookupPrincipalsWithRoleFunc func(ctx context.Context, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) ([]string, *net_http.Response, error)
+	LookupPrincipalsWithRoleFunc func(ctx context.Context, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) ([]string, *net_http.Response, error)
 
 	lockLookupPrincipalsWithRoleOnResource sync.Mutex
-	LookupPrincipalsWithRoleOnResourceFunc func(ctx context.Context, roleName, resourceType, resourceName string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) ([]string, *net_http.Response, error)
+	LookupPrincipalsWithRoleOnResourceFunc func(ctx context.Context, roleName, resourceType, resourceName string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) ([]string, *net_http.Response, error)
 
 	lockLookupResourcesForPrincipal sync.Mutex
-	LookupResourcesForPrincipalFunc func(ctx context.Context, principal string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) (map[string]map[string][]github_com_confluentinc_mds_sdk_go_mdsv1.ResourcePattern, *net_http.Response, error)
+	LookupResourcesForPrincipalFunc func(ctx context.Context, principal string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) (map[string]map[string][]github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcePattern, *net_http.Response, error)
 
 	lockScopedPrincipalRolenames sync.Mutex
-	ScopedPrincipalRolenamesFunc func(ctx context.Context, principal string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) ([]string, *net_http.Response, error)
+	ScopedPrincipalRolenamesFunc func(ctx context.Context, principal string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) ([]string, *net_http.Response, error)
 
 	calls struct {
 		LookupPrincipalsWithRole []struct {
 			Ctx      context.Context
 			RoleName string
-			MdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+			MdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 		}
 		LookupPrincipalsWithRoleOnResource []struct {
 			Ctx          context.Context
 			RoleName     string
 			ResourceType string
 			ResourceName string
-			MdsScope     github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+			MdsScope     github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 		}
 		LookupResourcesForPrincipal []struct {
 			Ctx       context.Context
 			Principal string
-			MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+			MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 		}
 		ScopedPrincipalRolenames []struct {
 			Ctx       context.Context
 			Principal string
-			MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+			MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 		}
 	}
 }
 
 // LookupPrincipalsWithRole mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRole(ctx context.Context, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) ([]string, *net_http.Response, error) {
+func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRole(ctx context.Context, roleName string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) ([]string, *net_http.Response, error) {
 	m.lockLookupPrincipalsWithRole.Lock()
 	defer m.lockLookupPrincipalsWithRole.Unlock()
 
@@ -64,7 +64,7 @@ func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRole(ctx context.Conte
 	call := struct {
 		Ctx      context.Context
 		RoleName string
-		MdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+		MdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 	}{
 		Ctx:      ctx,
 		RoleName: roleName,
@@ -88,7 +88,7 @@ func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleCalled() bool {
 func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleCalls() []struct {
 	Ctx      context.Context
 	RoleName string
-	MdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+	MdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 } {
 	m.lockLookupPrincipalsWithRole.Lock()
 	defer m.lockLookupPrincipalsWithRole.Unlock()
@@ -97,7 +97,7 @@ func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleCalls() []struct {
 }
 
 // LookupPrincipalsWithRoleOnResource mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleOnResource(ctx context.Context, roleName, resourceType, resourceName string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) ([]string, *net_http.Response, error) {
+func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleOnResource(ctx context.Context, roleName, resourceType, resourceName string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) ([]string, *net_http.Response, error) {
 	m.lockLookupPrincipalsWithRoleOnResource.Lock()
 	defer m.lockLookupPrincipalsWithRoleOnResource.Unlock()
 
@@ -110,7 +110,7 @@ func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleOnResource(ctx con
 		RoleName     string
 		ResourceType string
 		ResourceName string
-		MdsScope     github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+		MdsScope     github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 	}{
 		Ctx:          ctx,
 		RoleName:     roleName,
@@ -138,7 +138,7 @@ func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleOnResourceCalls() 
 	RoleName     string
 	ResourceType string
 	ResourceName string
-	MdsScope     github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+	MdsScope     github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 } {
 	m.lockLookupPrincipalsWithRoleOnResource.Lock()
 	defer m.lockLookupPrincipalsWithRoleOnResource.Unlock()
@@ -147,7 +147,7 @@ func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleOnResourceCalls() 
 }
 
 // LookupResourcesForPrincipal mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingSummariesApi) LookupResourcesForPrincipal(ctx context.Context, principal string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) (map[string]map[string][]github_com_confluentinc_mds_sdk_go_mdsv1.ResourcePattern, *net_http.Response, error) {
+func (m *RBACRoleBindingSummariesApi) LookupResourcesForPrincipal(ctx context.Context, principal string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) (map[string]map[string][]github_com_confluentinc_mds_sdk_go_public_mdsv1.ResourcePattern, *net_http.Response, error) {
 	m.lockLookupResourcesForPrincipal.Lock()
 	defer m.lockLookupResourcesForPrincipal.Unlock()
 
@@ -158,7 +158,7 @@ func (m *RBACRoleBindingSummariesApi) LookupResourcesForPrincipal(ctx context.Co
 	call := struct {
 		Ctx       context.Context
 		Principal string
-		MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+		MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 	}{
 		Ctx:       ctx,
 		Principal: principal,
@@ -182,7 +182,7 @@ func (m *RBACRoleBindingSummariesApi) LookupResourcesForPrincipalCalled() bool {
 func (m *RBACRoleBindingSummariesApi) LookupResourcesForPrincipalCalls() []struct {
 	Ctx       context.Context
 	Principal string
-	MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+	MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 } {
 	m.lockLookupResourcesForPrincipal.Lock()
 	defer m.lockLookupResourcesForPrincipal.Unlock()
@@ -191,7 +191,7 @@ func (m *RBACRoleBindingSummariesApi) LookupResourcesForPrincipalCalls() []struc
 }
 
 // ScopedPrincipalRolenames mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingSummariesApi) ScopedPrincipalRolenames(ctx context.Context, principal string, mdsScope github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope) ([]string, *net_http.Response, error) {
+func (m *RBACRoleBindingSummariesApi) ScopedPrincipalRolenames(ctx context.Context, principal string, mdsScope github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope) ([]string, *net_http.Response, error) {
 	m.lockScopedPrincipalRolenames.Lock()
 	defer m.lockScopedPrincipalRolenames.Unlock()
 
@@ -202,7 +202,7 @@ func (m *RBACRoleBindingSummariesApi) ScopedPrincipalRolenames(ctx context.Conte
 	call := struct {
 		Ctx       context.Context
 		Principal string
-		MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+		MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 	}{
 		Ctx:       ctx,
 		Principal: principal,
@@ -226,7 +226,7 @@ func (m *RBACRoleBindingSummariesApi) ScopedPrincipalRolenamesCalled() bool {
 func (m *RBACRoleBindingSummariesApi) ScopedPrincipalRolenamesCalls() []struct {
 	Ctx       context.Context
 	Principal string
-	MdsScope  github_com_confluentinc_mds_sdk_go_mdsv1.MdsScope
+	MdsScope  github_com_confluentinc_mds_sdk_go_public_mdsv1.MdsScope
 } {
 	m.lockScopedPrincipalRolenames.Lock()
 	defer m.lockScopedPrincipalRolenames.Unlock()

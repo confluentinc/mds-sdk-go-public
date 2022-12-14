@@ -9,19 +9,19 @@ import (
 	net_http "net/http"
 	sync "sync"
 
-	github_com_confluentinc_mds_sdk_go_mdsv1 "github.com/confluentinc/mds-sdk-go/mdsv1"
+	github_com_confluentinc_mds_sdk_go_public_mdsv1 "github.com/confluentinc/mds-sdk-go-public/mdsv1"
 )
 
 // RBACRoleDefinitionsApi is a mock of RBACRoleDefinitionsApi interface
 type RBACRoleDefinitionsApi struct {
 	lockRoleDetail sync.Mutex
-	RoleDetailFunc func(ctx context.Context, roleName string) (github_com_confluentinc_mds_sdk_go_mdsv1.Role, *net_http.Response, error)
+	RoleDetailFunc func(ctx context.Context, roleName string) (github_com_confluentinc_mds_sdk_go_public_mdsv1.Role, *net_http.Response, error)
 
 	lockRolenames sync.Mutex
 	RolenamesFunc func(ctx context.Context) ([]string, *net_http.Response, error)
 
 	lockRoles sync.Mutex
-	RolesFunc func(ctx context.Context) ([]github_com_confluentinc_mds_sdk_go_mdsv1.Role, *net_http.Response, error)
+	RolesFunc func(ctx context.Context) ([]github_com_confluentinc_mds_sdk_go_public_mdsv1.Role, *net_http.Response, error)
 
 	calls struct {
 		RoleDetail []struct {
@@ -38,7 +38,7 @@ type RBACRoleDefinitionsApi struct {
 }
 
 // RoleDetail mocks base method by wrapping the associated func.
-func (m *RBACRoleDefinitionsApi) RoleDetail(ctx context.Context, roleName string) (github_com_confluentinc_mds_sdk_go_mdsv1.Role, *net_http.Response, error) {
+func (m *RBACRoleDefinitionsApi) RoleDetail(ctx context.Context, roleName string) (github_com_confluentinc_mds_sdk_go_public_mdsv1.Role, *net_http.Response, error) {
 	m.lockRoleDetail.Lock()
 	defer m.lockRoleDetail.Unlock()
 
@@ -117,7 +117,7 @@ func (m *RBACRoleDefinitionsApi) RolenamesCalls() []struct {
 }
 
 // Roles mocks base method by wrapping the associated func.
-func (m *RBACRoleDefinitionsApi) Roles(ctx context.Context) ([]github_com_confluentinc_mds_sdk_go_mdsv1.Role, *net_http.Response, error) {
+func (m *RBACRoleDefinitionsApi) Roles(ctx context.Context) ([]github_com_confluentinc_mds_sdk_go_public_mdsv1.Role, *net_http.Response, error) {
 	m.lockRoles.Lock()
 	defer m.lockRoles.Unlock()
 

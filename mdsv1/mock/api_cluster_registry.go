@@ -9,27 +9,27 @@ import (
 	net_http "net/http"
 	sync "sync"
 
-	github_com_confluentinc_mds_sdk_go_mdsv1 "github.com/confluentinc/mds-sdk-go/mdsv1"
+	github_com_confluentinc_mds_sdk_go_public_mdsv1 "github.com/confluentinc/mds-sdk-go-public/mdsv1"
 )
 
 // ClusterRegistryApi is a mock of ClusterRegistryApi interface
 type ClusterRegistryApi struct {
 	lockClusterRegistryList sync.Mutex
-	ClusterRegistryListFunc func(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ClusterRegistryListOpts) ([]github_com_confluentinc_mds_sdk_go_mdsv1.ClusterInfo, *net_http.Response, error)
+	ClusterRegistryListFunc func(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterRegistryListOpts) ([]github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterInfo, *net_http.Response, error)
 
 	lockDeleteNamedCluster sync.Mutex
 	DeleteNamedClusterFunc func(ctx context.Context, clusterName string) (*net_http.Response, error)
 
 	lockGetNamedCluster sync.Mutex
-	GetNamedClusterFunc func(ctx context.Context, clusterName string) (github_com_confluentinc_mds_sdk_go_mdsv1.ClusterInfo, *net_http.Response, error)
+	GetNamedClusterFunc func(ctx context.Context, clusterName string) (github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterInfo, *net_http.Response, error)
 
 	lockUpdateClusters sync.Mutex
-	UpdateClustersFunc func(ctx context.Context, clusterInfo []github_com_confluentinc_mds_sdk_go_mdsv1.ClusterInfo) (*net_http.Response, error)
+	UpdateClustersFunc func(ctx context.Context, clusterInfo []github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterInfo) (*net_http.Response, error)
 
 	calls struct {
 		ClusterRegistryList []struct {
 			Ctx               context.Context
-			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ClusterRegistryListOpts
+			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterRegistryListOpts
 		}
 		DeleteNamedCluster []struct {
 			Ctx         context.Context
@@ -41,13 +41,13 @@ type ClusterRegistryApi struct {
 		}
 		UpdateClusters []struct {
 			Ctx         context.Context
-			ClusterInfo []github_com_confluentinc_mds_sdk_go_mdsv1.ClusterInfo
+			ClusterInfo []github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterInfo
 		}
 	}
 }
 
 // ClusterRegistryList mocks base method by wrapping the associated func.
-func (m *ClusterRegistryApi) ClusterRegistryList(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ClusterRegistryListOpts) ([]github_com_confluentinc_mds_sdk_go_mdsv1.ClusterInfo, *net_http.Response, error) {
+func (m *ClusterRegistryApi) ClusterRegistryList(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterRegistryListOpts) ([]github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterInfo, *net_http.Response, error) {
 	m.lockClusterRegistryList.Lock()
 	defer m.lockClusterRegistryList.Unlock()
 
@@ -57,7 +57,7 @@ func (m *ClusterRegistryApi) ClusterRegistryList(ctx context.Context, localVarOp
 
 	call := struct {
 		Ctx               context.Context
-		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ClusterRegistryListOpts
+		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterRegistryListOpts
 	}{
 		Ctx:               ctx,
 		LocalVarOptionals: localVarOptionals,
@@ -79,7 +79,7 @@ func (m *ClusterRegistryApi) ClusterRegistryListCalled() bool {
 // ClusterRegistryListCalls returns the calls made to ClusterRegistryList.
 func (m *ClusterRegistryApi) ClusterRegistryListCalls() []struct {
 	Ctx               context.Context
-	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv1.ClusterRegistryListOpts
+	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterRegistryListOpts
 } {
 	m.lockClusterRegistryList.Lock()
 	defer m.lockClusterRegistryList.Unlock()
@@ -129,7 +129,7 @@ func (m *ClusterRegistryApi) DeleteNamedClusterCalls() []struct {
 }
 
 // GetNamedCluster mocks base method by wrapping the associated func.
-func (m *ClusterRegistryApi) GetNamedCluster(ctx context.Context, clusterName string) (github_com_confluentinc_mds_sdk_go_mdsv1.ClusterInfo, *net_http.Response, error) {
+func (m *ClusterRegistryApi) GetNamedCluster(ctx context.Context, clusterName string) (github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterInfo, *net_http.Response, error) {
 	m.lockGetNamedCluster.Lock()
 	defer m.lockGetNamedCluster.Unlock()
 
@@ -170,7 +170,7 @@ func (m *ClusterRegistryApi) GetNamedClusterCalls() []struct {
 }
 
 // UpdateClusters mocks base method by wrapping the associated func.
-func (m *ClusterRegistryApi) UpdateClusters(ctx context.Context, clusterInfo []github_com_confluentinc_mds_sdk_go_mdsv1.ClusterInfo) (*net_http.Response, error) {
+func (m *ClusterRegistryApi) UpdateClusters(ctx context.Context, clusterInfo []github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterInfo) (*net_http.Response, error) {
 	m.lockUpdateClusters.Lock()
 	defer m.lockUpdateClusters.Unlock()
 
@@ -180,7 +180,7 @@ func (m *ClusterRegistryApi) UpdateClusters(ctx context.Context, clusterInfo []g
 
 	call := struct {
 		Ctx         context.Context
-		ClusterInfo []github_com_confluentinc_mds_sdk_go_mdsv1.ClusterInfo
+		ClusterInfo []github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterInfo
 	}{
 		Ctx:         ctx,
 		ClusterInfo: clusterInfo,
@@ -202,7 +202,7 @@ func (m *ClusterRegistryApi) UpdateClustersCalled() bool {
 // UpdateClustersCalls returns the calls made to UpdateClusters.
 func (m *ClusterRegistryApi) UpdateClustersCalls() []struct {
 	Ctx         context.Context
-	ClusterInfo []github_com_confluentinc_mds_sdk_go_mdsv1.ClusterInfo
+	ClusterInfo []github_com_confluentinc_mds_sdk_go_public_mdsv1.ClusterInfo
 } {
 	m.lockUpdateClusters.Lock()
 	defer m.lockUpdateClusters.Unlock()
