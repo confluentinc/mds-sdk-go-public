@@ -9,59 +9,59 @@ import (
 	net_http "net/http"
 	sync "sync"
 
-	github_com_confluentinc_mds_sdk_go_mdsv2alpha1 "github.com/confluentinc/mds-sdk-go/mdsv2alpha1"
+	github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1 "github.com/confluentinc/mds-sdk-go-public/mdsv2alpha1"
 )
 
 // RBACRoleBindingSummariesApi is a mock of RBACRoleBindingSummariesApi interface
 type RBACRoleBindingSummariesApi struct {
 	lockLookupPrincipalsWithRole sync.Mutex
-	LookupPrincipalsWithRoleFunc func(ctx context.Context, roleName string, scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope) ([]string, *net_http.Response, error)
+	LookupPrincipalsWithRoleFunc func(ctx context.Context, roleName string, scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope) ([]string, *net_http.Response, error)
 
 	lockLookupPrincipalsWithRoleOnResource sync.Mutex
-	LookupPrincipalsWithRoleOnResourceFunc func(ctx context.Context, roleName, resourceType, resourceName string, scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope) ([]string, *net_http.Response, error)
+	LookupPrincipalsWithRoleOnResourceFunc func(ctx context.Context, roleName, resourceType, resourceName string, scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope) ([]string, *net_http.Response, error)
 
 	lockManagedNonResourceRoleBindingsAtScope sync.Mutex
-	ManagedNonResourceRoleBindingsAtScopeFunc func(ctx context.Context, scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope) ([]github_com_confluentinc_mds_sdk_go_mdsv2alpha1.ManagedRoleBinding, *net_http.Response, error)
+	ManagedNonResourceRoleBindingsAtScopeFunc func(ctx context.Context, scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope) ([]github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.ManagedRoleBinding, *net_http.Response, error)
 
 	lockMyAllowedResources sync.Mutex
-	MyAllowedResourcesFunc func(ctx context.Context, resourceType, operation string, scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope) ([]github_com_confluentinc_mds_sdk_go_mdsv2alpha1.ResourcePattern, *net_http.Response, error)
+	MyAllowedResourcesFunc func(ctx context.Context, resourceType, operation string, scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope) ([]github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.ResourcePattern, *net_http.Response, error)
 
 	lockMyRoleBindings sync.Mutex
-	MyRoleBindingsFunc func(ctx context.Context, principal string, scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope) ([]github_com_confluentinc_mds_sdk_go_mdsv2alpha1.ScopeRoleBindingMapping, *net_http.Response, error)
+	MyRoleBindingsFunc func(ctx context.Context, principal string, scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope) ([]github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.ScopeRoleBindingMapping, *net_http.Response, error)
 
 	calls struct {
 		LookupPrincipalsWithRole []struct {
 			Ctx      context.Context
 			RoleName string
-			Scope    github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+			Scope    github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 		}
 		LookupPrincipalsWithRoleOnResource []struct {
 			Ctx          context.Context
 			RoleName     string
 			ResourceType string
 			ResourceName string
-			Scope        github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+			Scope        github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 		}
 		ManagedNonResourceRoleBindingsAtScope []struct {
 			Ctx   context.Context
-			Scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+			Scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 		}
 		MyAllowedResources []struct {
 			Ctx          context.Context
 			ResourceType string
 			Operation    string
-			Scope        github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+			Scope        github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 		}
 		MyRoleBindings []struct {
 			Ctx       context.Context
 			Principal string
-			Scope     github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+			Scope     github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 		}
 	}
 }
 
 // LookupPrincipalsWithRole mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRole(ctx context.Context, roleName string, scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope) ([]string, *net_http.Response, error) {
+func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRole(ctx context.Context, roleName string, scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope) ([]string, *net_http.Response, error) {
 	m.lockLookupPrincipalsWithRole.Lock()
 	defer m.lockLookupPrincipalsWithRole.Unlock()
 
@@ -72,7 +72,7 @@ func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRole(ctx context.Conte
 	call := struct {
 		Ctx      context.Context
 		RoleName string
-		Scope    github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+		Scope    github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 	}{
 		Ctx:      ctx,
 		RoleName: roleName,
@@ -96,7 +96,7 @@ func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleCalled() bool {
 func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleCalls() []struct {
 	Ctx      context.Context
 	RoleName string
-	Scope    github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+	Scope    github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 } {
 	m.lockLookupPrincipalsWithRole.Lock()
 	defer m.lockLookupPrincipalsWithRole.Unlock()
@@ -105,7 +105,7 @@ func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleCalls() []struct {
 }
 
 // LookupPrincipalsWithRoleOnResource mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleOnResource(ctx context.Context, roleName, resourceType, resourceName string, scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope) ([]string, *net_http.Response, error) {
+func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleOnResource(ctx context.Context, roleName, resourceType, resourceName string, scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope) ([]string, *net_http.Response, error) {
 	m.lockLookupPrincipalsWithRoleOnResource.Lock()
 	defer m.lockLookupPrincipalsWithRoleOnResource.Unlock()
 
@@ -118,7 +118,7 @@ func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleOnResource(ctx con
 		RoleName     string
 		ResourceType string
 		ResourceName string
-		Scope        github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+		Scope        github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 	}{
 		Ctx:          ctx,
 		RoleName:     roleName,
@@ -146,7 +146,7 @@ func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleOnResourceCalls() 
 	RoleName     string
 	ResourceType string
 	ResourceName string
-	Scope        github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+	Scope        github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 } {
 	m.lockLookupPrincipalsWithRoleOnResource.Lock()
 	defer m.lockLookupPrincipalsWithRoleOnResource.Unlock()
@@ -155,7 +155,7 @@ func (m *RBACRoleBindingSummariesApi) LookupPrincipalsWithRoleOnResourceCalls() 
 }
 
 // ManagedNonResourceRoleBindingsAtScope mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingSummariesApi) ManagedNonResourceRoleBindingsAtScope(ctx context.Context, scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope) ([]github_com_confluentinc_mds_sdk_go_mdsv2alpha1.ManagedRoleBinding, *net_http.Response, error) {
+func (m *RBACRoleBindingSummariesApi) ManagedNonResourceRoleBindingsAtScope(ctx context.Context, scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope) ([]github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.ManagedRoleBinding, *net_http.Response, error) {
 	m.lockManagedNonResourceRoleBindingsAtScope.Lock()
 	defer m.lockManagedNonResourceRoleBindingsAtScope.Unlock()
 
@@ -165,7 +165,7 @@ func (m *RBACRoleBindingSummariesApi) ManagedNonResourceRoleBindingsAtScope(ctx 
 
 	call := struct {
 		Ctx   context.Context
-		Scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+		Scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 	}{
 		Ctx:   ctx,
 		Scope: scope,
@@ -187,7 +187,7 @@ func (m *RBACRoleBindingSummariesApi) ManagedNonResourceRoleBindingsAtScopeCalle
 // ManagedNonResourceRoleBindingsAtScopeCalls returns the calls made to ManagedNonResourceRoleBindingsAtScope.
 func (m *RBACRoleBindingSummariesApi) ManagedNonResourceRoleBindingsAtScopeCalls() []struct {
 	Ctx   context.Context
-	Scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+	Scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 } {
 	m.lockManagedNonResourceRoleBindingsAtScope.Lock()
 	defer m.lockManagedNonResourceRoleBindingsAtScope.Unlock()
@@ -196,7 +196,7 @@ func (m *RBACRoleBindingSummariesApi) ManagedNonResourceRoleBindingsAtScopeCalls
 }
 
 // MyAllowedResources mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingSummariesApi) MyAllowedResources(ctx context.Context, resourceType, operation string, scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope) ([]github_com_confluentinc_mds_sdk_go_mdsv2alpha1.ResourcePattern, *net_http.Response, error) {
+func (m *RBACRoleBindingSummariesApi) MyAllowedResources(ctx context.Context, resourceType, operation string, scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope) ([]github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.ResourcePattern, *net_http.Response, error) {
 	m.lockMyAllowedResources.Lock()
 	defer m.lockMyAllowedResources.Unlock()
 
@@ -208,7 +208,7 @@ func (m *RBACRoleBindingSummariesApi) MyAllowedResources(ctx context.Context, re
 		Ctx          context.Context
 		ResourceType string
 		Operation    string
-		Scope        github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+		Scope        github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 	}{
 		Ctx:          ctx,
 		ResourceType: resourceType,
@@ -234,7 +234,7 @@ func (m *RBACRoleBindingSummariesApi) MyAllowedResourcesCalls() []struct {
 	Ctx          context.Context
 	ResourceType string
 	Operation    string
-	Scope        github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+	Scope        github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 } {
 	m.lockMyAllowedResources.Lock()
 	defer m.lockMyAllowedResources.Unlock()
@@ -243,7 +243,7 @@ func (m *RBACRoleBindingSummariesApi) MyAllowedResourcesCalls() []struct {
 }
 
 // MyRoleBindings mocks base method by wrapping the associated func.
-func (m *RBACRoleBindingSummariesApi) MyRoleBindings(ctx context.Context, principal string, scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope) ([]github_com_confluentinc_mds_sdk_go_mdsv2alpha1.ScopeRoleBindingMapping, *net_http.Response, error) {
+func (m *RBACRoleBindingSummariesApi) MyRoleBindings(ctx context.Context, principal string, scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope) ([]github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.ScopeRoleBindingMapping, *net_http.Response, error) {
 	m.lockMyRoleBindings.Lock()
 	defer m.lockMyRoleBindings.Unlock()
 
@@ -254,7 +254,7 @@ func (m *RBACRoleBindingSummariesApi) MyRoleBindings(ctx context.Context, princi
 	call := struct {
 		Ctx       context.Context
 		Principal string
-		Scope     github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+		Scope     github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 	}{
 		Ctx:       ctx,
 		Principal: principal,
@@ -278,7 +278,7 @@ func (m *RBACRoleBindingSummariesApi) MyRoleBindingsCalled() bool {
 func (m *RBACRoleBindingSummariesApi) MyRoleBindingsCalls() []struct {
 	Ctx       context.Context
 	Principal string
-	Scope     github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+	Scope     github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 } {
 	m.lockMyRoleBindings.Lock()
 	defer m.lockMyRoleBindings.Unlock()

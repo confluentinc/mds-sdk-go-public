@@ -29,16 +29,3 @@ test:
 sdk-set-bumped-version:
 	echo "package mds\n\nconst SDKVersion = \"$(BUMPED_VERSION)\"" > version.go
 	git add version.go
-
-.PHONY: release
-release: sdk-set-bumped-version get-release-image commit-release tag-release
-
-.PHONY: release-ci
-release-ci:
-ifeq ($(CI),true)
-ifneq ($(RELEASE_BRANCH),$(_empty))
-	make release
-endif
-else
-	true
-endif

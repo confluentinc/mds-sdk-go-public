@@ -9,39 +9,39 @@ import (
 	net_http "net/http"
 	sync "sync"
 
-	github_com_confluentinc_mds_sdk_go_mdsv2alpha1 "github.com/confluentinc/mds-sdk-go/mdsv2alpha1"
+	github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1 "github.com/confluentinc/mds-sdk-go-public/mdsv2alpha1"
 )
 
 // RBACRoleDefinitionsApi is a mock of RBACRoleDefinitionsApi interface
 type RBACRoleDefinitionsApi struct {
 	lockRoleDetail sync.Mutex
-	RoleDetailFunc func(ctx context.Context, roleName string, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RoleDetailOpts) (github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Role, *net_http.Response, error)
+	RoleDetailFunc func(ctx context.Context, roleName string, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RoleDetailOpts) (github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Role, *net_http.Response, error)
 
 	lockRolenames sync.Mutex
-	RolenamesFunc func(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RolenamesOpts) ([]string, *net_http.Response, error)
+	RolenamesFunc func(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RolenamesOpts) ([]string, *net_http.Response, error)
 
 	lockRoles sync.Mutex
-	RolesFunc func(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RolesOpts) ([]github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Role, *net_http.Response, error)
+	RolesFunc func(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RolesOpts) ([]github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Role, *net_http.Response, error)
 
 	calls struct {
 		RoleDetail []struct {
 			Ctx               context.Context
 			RoleName          string
-			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RoleDetailOpts
+			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RoleDetailOpts
 		}
 		Rolenames []struct {
 			Ctx               context.Context
-			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RolenamesOpts
+			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RolenamesOpts
 		}
 		Roles []struct {
 			Ctx               context.Context
-			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RolesOpts
+			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RolesOpts
 		}
 	}
 }
 
 // RoleDetail mocks base method by wrapping the associated func.
-func (m *RBACRoleDefinitionsApi) RoleDetail(ctx context.Context, roleName string, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RoleDetailOpts) (github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Role, *net_http.Response, error) {
+func (m *RBACRoleDefinitionsApi) RoleDetail(ctx context.Context, roleName string, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RoleDetailOpts) (github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Role, *net_http.Response, error) {
 	m.lockRoleDetail.Lock()
 	defer m.lockRoleDetail.Unlock()
 
@@ -52,7 +52,7 @@ func (m *RBACRoleDefinitionsApi) RoleDetail(ctx context.Context, roleName string
 	call := struct {
 		Ctx               context.Context
 		RoleName          string
-		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RoleDetailOpts
+		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RoleDetailOpts
 	}{
 		Ctx:               ctx,
 		RoleName:          roleName,
@@ -76,7 +76,7 @@ func (m *RBACRoleDefinitionsApi) RoleDetailCalled() bool {
 func (m *RBACRoleDefinitionsApi) RoleDetailCalls() []struct {
 	Ctx               context.Context
 	RoleName          string
-	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RoleDetailOpts
+	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RoleDetailOpts
 } {
 	m.lockRoleDetail.Lock()
 	defer m.lockRoleDetail.Unlock()
@@ -85,7 +85,7 @@ func (m *RBACRoleDefinitionsApi) RoleDetailCalls() []struct {
 }
 
 // Rolenames mocks base method by wrapping the associated func.
-func (m *RBACRoleDefinitionsApi) Rolenames(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RolenamesOpts) ([]string, *net_http.Response, error) {
+func (m *RBACRoleDefinitionsApi) Rolenames(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RolenamesOpts) ([]string, *net_http.Response, error) {
 	m.lockRolenames.Lock()
 	defer m.lockRolenames.Unlock()
 
@@ -95,7 +95,7 @@ func (m *RBACRoleDefinitionsApi) Rolenames(ctx context.Context, localVarOptional
 
 	call := struct {
 		Ctx               context.Context
-		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RolenamesOpts
+		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RolenamesOpts
 	}{
 		Ctx:               ctx,
 		LocalVarOptionals: localVarOptionals,
@@ -117,7 +117,7 @@ func (m *RBACRoleDefinitionsApi) RolenamesCalled() bool {
 // RolenamesCalls returns the calls made to Rolenames.
 func (m *RBACRoleDefinitionsApi) RolenamesCalls() []struct {
 	Ctx               context.Context
-	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RolenamesOpts
+	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RolenamesOpts
 } {
 	m.lockRolenames.Lock()
 	defer m.lockRolenames.Unlock()
@@ -126,7 +126,7 @@ func (m *RBACRoleDefinitionsApi) RolenamesCalls() []struct {
 }
 
 // Roles mocks base method by wrapping the associated func.
-func (m *RBACRoleDefinitionsApi) Roles(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RolesOpts) ([]github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Role, *net_http.Response, error) {
+func (m *RBACRoleDefinitionsApi) Roles(ctx context.Context, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RolesOpts) ([]github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Role, *net_http.Response, error) {
 	m.lockRoles.Lock()
 	defer m.lockRoles.Unlock()
 
@@ -136,7 +136,7 @@ func (m *RBACRoleDefinitionsApi) Roles(ctx context.Context, localVarOptionals *g
 
 	call := struct {
 		Ctx               context.Context
-		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RolesOpts
+		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RolesOpts
 	}{
 		Ctx:               ctx,
 		LocalVarOptionals: localVarOptionals,
@@ -158,7 +158,7 @@ func (m *RBACRoleDefinitionsApi) RolesCalled() bool {
 // RolesCalls returns the calls made to Roles.
 func (m *RBACRoleDefinitionsApi) RolesCalls() []struct {
 	Ctx               context.Context
-	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.RolesOpts
+	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.RolesOpts
 } {
 	m.lockRoles.Lock()
 	defer m.lockRoles.Unlock()

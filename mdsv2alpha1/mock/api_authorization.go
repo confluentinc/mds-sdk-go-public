@@ -9,25 +9,25 @@ import (
 	net_http "net/http"
 	sync "sync"
 
-	github_com_confluentinc_mds_sdk_go_mdsv2alpha1 "github.com/confluentinc/mds-sdk-go/mdsv2alpha1"
+	github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1 "github.com/confluentinc/mds-sdk-go-public/mdsv2alpha1"
 )
 
 // AuthorizationApi is a mock of AuthorizationApi interface
 type AuthorizationApi struct {
 	lockAuthorize sync.Mutex
-	AuthorizeFunc func(ctx context.Context, authorizeRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.AuthorizeRequest, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.AuthorizeOpts) ([]string, *net_http.Response, error)
+	AuthorizeFunc func(ctx context.Context, authorizeRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.AuthorizeRequest, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.AuthorizeOpts) ([]string, *net_http.Response, error)
 
 	calls struct {
 		Authorize []struct {
 			Ctx               context.Context
-			AuthorizeRequest  github_com_confluentinc_mds_sdk_go_mdsv2alpha1.AuthorizeRequest
-			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.AuthorizeOpts
+			AuthorizeRequest  github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.AuthorizeRequest
+			LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.AuthorizeOpts
 		}
 	}
 }
 
 // Authorize mocks base method by wrapping the associated func.
-func (m *AuthorizationApi) Authorize(ctx context.Context, authorizeRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.AuthorizeRequest, localVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.AuthorizeOpts) ([]string, *net_http.Response, error) {
+func (m *AuthorizationApi) Authorize(ctx context.Context, authorizeRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.AuthorizeRequest, localVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.AuthorizeOpts) ([]string, *net_http.Response, error) {
 	m.lockAuthorize.Lock()
 	defer m.lockAuthorize.Unlock()
 
@@ -37,8 +37,8 @@ func (m *AuthorizationApi) Authorize(ctx context.Context, authorizeRequest githu
 
 	call := struct {
 		Ctx               context.Context
-		AuthorizeRequest  github_com_confluentinc_mds_sdk_go_mdsv2alpha1.AuthorizeRequest
-		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.AuthorizeOpts
+		AuthorizeRequest  github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.AuthorizeRequest
+		LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.AuthorizeOpts
 	}{
 		Ctx:               ctx,
 		AuthorizeRequest:  authorizeRequest,
@@ -61,8 +61,8 @@ func (m *AuthorizationApi) AuthorizeCalled() bool {
 // AuthorizeCalls returns the calls made to Authorize.
 func (m *AuthorizationApi) AuthorizeCalls() []struct {
 	Ctx               context.Context
-	AuthorizeRequest  github_com_confluentinc_mds_sdk_go_mdsv2alpha1.AuthorizeRequest
-	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_mdsv2alpha1.AuthorizeOpts
+	AuthorizeRequest  github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.AuthorizeRequest
+	LocalVarOptionals *github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.AuthorizeOpts
 } {
 	m.lockAuthorize.Lock()
 	defer m.lockAuthorize.Unlock()

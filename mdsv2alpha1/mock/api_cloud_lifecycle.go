@@ -9,47 +9,47 @@ import (
 	net_http "net/http"
 	sync "sync"
 
-	github_com_confluentinc_mds_sdk_go_mdsv2alpha1 "github.com/confluentinc/mds-sdk-go/mdsv2alpha1"
+	github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1 "github.com/confluentinc/mds-sdk-go-public/mdsv2alpha1"
 )
 
 // CloudLifecycleApi is a mock of CloudLifecycleApi interface
 type CloudLifecycleApi struct {
 	lockDuplicateRolesForOrg sync.Mutex
-	DuplicateRolesForOrgFunc func(ctx context.Context, sourceOrgId string, duplicateRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.DuplicateRequest) (*net_http.Response, error)
+	DuplicateRolesForOrgFunc func(ctx context.Context, sourceOrgId string, duplicateRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.DuplicateRequest) (*net_http.Response, error)
 
 	lockRemoveAllRoleBindingsForScope sync.Mutex
-	RemoveAllRoleBindingsForScopeFunc func(ctx context.Context, transactionId string, scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope) (*net_http.Response, error)
+	RemoveAllRoleBindingsForScopeFunc func(ctx context.Context, transactionId string, scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope) (*net_http.Response, error)
 
 	lockScopeUndelete sync.Mutex
-	ScopeUndeleteFunc func(ctx context.Context, scopeUndeleteRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.ScopeUndeleteRequest) ([]string, *net_http.Response, error)
+	ScopeUndeleteFunc func(ctx context.Context, scopeUndeleteRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.ScopeUndeleteRequest) ([]string, *net_http.Response, error)
 
 	lockUserUndelete sync.Mutex
-	UserUndeleteFunc func(ctx context.Context, userUndeleteRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.UserUndeleteRequest) ([]string, *net_http.Response, error)
+	UserUndeleteFunc func(ctx context.Context, userUndeleteRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.UserUndeleteRequest) ([]string, *net_http.Response, error)
 
 	calls struct {
 		DuplicateRolesForOrg []struct {
 			Ctx              context.Context
 			SourceOrgId      string
-			DuplicateRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.DuplicateRequest
+			DuplicateRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.DuplicateRequest
 		}
 		RemoveAllRoleBindingsForScope []struct {
 			Ctx           context.Context
 			TransactionId string
-			Scope         github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+			Scope         github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 		}
 		ScopeUndelete []struct {
 			Ctx                  context.Context
-			ScopeUndeleteRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.ScopeUndeleteRequest
+			ScopeUndeleteRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.ScopeUndeleteRequest
 		}
 		UserUndelete []struct {
 			Ctx                 context.Context
-			UserUndeleteRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.UserUndeleteRequest
+			UserUndeleteRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.UserUndeleteRequest
 		}
 	}
 }
 
 // DuplicateRolesForOrg mocks base method by wrapping the associated func.
-func (m *CloudLifecycleApi) DuplicateRolesForOrg(ctx context.Context, sourceOrgId string, duplicateRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.DuplicateRequest) (*net_http.Response, error) {
+func (m *CloudLifecycleApi) DuplicateRolesForOrg(ctx context.Context, sourceOrgId string, duplicateRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.DuplicateRequest) (*net_http.Response, error) {
 	m.lockDuplicateRolesForOrg.Lock()
 	defer m.lockDuplicateRolesForOrg.Unlock()
 
@@ -60,7 +60,7 @@ func (m *CloudLifecycleApi) DuplicateRolesForOrg(ctx context.Context, sourceOrgI
 	call := struct {
 		Ctx              context.Context
 		SourceOrgId      string
-		DuplicateRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.DuplicateRequest
+		DuplicateRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.DuplicateRequest
 	}{
 		Ctx:              ctx,
 		SourceOrgId:      sourceOrgId,
@@ -84,7 +84,7 @@ func (m *CloudLifecycleApi) DuplicateRolesForOrgCalled() bool {
 func (m *CloudLifecycleApi) DuplicateRolesForOrgCalls() []struct {
 	Ctx              context.Context
 	SourceOrgId      string
-	DuplicateRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.DuplicateRequest
+	DuplicateRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.DuplicateRequest
 } {
 	m.lockDuplicateRolesForOrg.Lock()
 	defer m.lockDuplicateRolesForOrg.Unlock()
@@ -93,7 +93,7 @@ func (m *CloudLifecycleApi) DuplicateRolesForOrgCalls() []struct {
 }
 
 // RemoveAllRoleBindingsForScope mocks base method by wrapping the associated func.
-func (m *CloudLifecycleApi) RemoveAllRoleBindingsForScope(ctx context.Context, transactionId string, scope github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope) (*net_http.Response, error) {
+func (m *CloudLifecycleApi) RemoveAllRoleBindingsForScope(ctx context.Context, transactionId string, scope github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope) (*net_http.Response, error) {
 	m.lockRemoveAllRoleBindingsForScope.Lock()
 	defer m.lockRemoveAllRoleBindingsForScope.Unlock()
 
@@ -104,7 +104,7 @@ func (m *CloudLifecycleApi) RemoveAllRoleBindingsForScope(ctx context.Context, t
 	call := struct {
 		Ctx           context.Context
 		TransactionId string
-		Scope         github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+		Scope         github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 	}{
 		Ctx:           ctx,
 		TransactionId: transactionId,
@@ -128,7 +128,7 @@ func (m *CloudLifecycleApi) RemoveAllRoleBindingsForScopeCalled() bool {
 func (m *CloudLifecycleApi) RemoveAllRoleBindingsForScopeCalls() []struct {
 	Ctx           context.Context
 	TransactionId string
-	Scope         github_com_confluentinc_mds_sdk_go_mdsv2alpha1.Scope
+	Scope         github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.Scope
 } {
 	m.lockRemoveAllRoleBindingsForScope.Lock()
 	defer m.lockRemoveAllRoleBindingsForScope.Unlock()
@@ -137,7 +137,7 @@ func (m *CloudLifecycleApi) RemoveAllRoleBindingsForScopeCalls() []struct {
 }
 
 // ScopeUndelete mocks base method by wrapping the associated func.
-func (m *CloudLifecycleApi) ScopeUndelete(ctx context.Context, scopeUndeleteRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.ScopeUndeleteRequest) ([]string, *net_http.Response, error) {
+func (m *CloudLifecycleApi) ScopeUndelete(ctx context.Context, scopeUndeleteRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.ScopeUndeleteRequest) ([]string, *net_http.Response, error) {
 	m.lockScopeUndelete.Lock()
 	defer m.lockScopeUndelete.Unlock()
 
@@ -147,7 +147,7 @@ func (m *CloudLifecycleApi) ScopeUndelete(ctx context.Context, scopeUndeleteRequ
 
 	call := struct {
 		Ctx                  context.Context
-		ScopeUndeleteRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.ScopeUndeleteRequest
+		ScopeUndeleteRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.ScopeUndeleteRequest
 	}{
 		Ctx:                  ctx,
 		ScopeUndeleteRequest: scopeUndeleteRequest,
@@ -169,7 +169,7 @@ func (m *CloudLifecycleApi) ScopeUndeleteCalled() bool {
 // ScopeUndeleteCalls returns the calls made to ScopeUndelete.
 func (m *CloudLifecycleApi) ScopeUndeleteCalls() []struct {
 	Ctx                  context.Context
-	ScopeUndeleteRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.ScopeUndeleteRequest
+	ScopeUndeleteRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.ScopeUndeleteRequest
 } {
 	m.lockScopeUndelete.Lock()
 	defer m.lockScopeUndelete.Unlock()
@@ -178,7 +178,7 @@ func (m *CloudLifecycleApi) ScopeUndeleteCalls() []struct {
 }
 
 // UserUndelete mocks base method by wrapping the associated func.
-func (m *CloudLifecycleApi) UserUndelete(ctx context.Context, userUndeleteRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.UserUndeleteRequest) ([]string, *net_http.Response, error) {
+func (m *CloudLifecycleApi) UserUndelete(ctx context.Context, userUndeleteRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.UserUndeleteRequest) ([]string, *net_http.Response, error) {
 	m.lockUserUndelete.Lock()
 	defer m.lockUserUndelete.Unlock()
 
@@ -188,7 +188,7 @@ func (m *CloudLifecycleApi) UserUndelete(ctx context.Context, userUndeleteReques
 
 	call := struct {
 		Ctx                 context.Context
-		UserUndeleteRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.UserUndeleteRequest
+		UserUndeleteRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.UserUndeleteRequest
 	}{
 		Ctx:                 ctx,
 		UserUndeleteRequest: userUndeleteRequest,
@@ -210,7 +210,7 @@ func (m *CloudLifecycleApi) UserUndeleteCalled() bool {
 // UserUndeleteCalls returns the calls made to UserUndelete.
 func (m *CloudLifecycleApi) UserUndeleteCalls() []struct {
 	Ctx                 context.Context
-	UserUndeleteRequest github_com_confluentinc_mds_sdk_go_mdsv2alpha1.UserUndeleteRequest
+	UserUndeleteRequest github_com_confluentinc_mds_sdk_go_public_mdsv2alpha1.UserUndeleteRequest
 } {
 	m.lockUserUndelete.Lock()
 	defer m.lockUserUndelete.Unlock()
