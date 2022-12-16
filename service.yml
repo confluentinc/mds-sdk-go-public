@@ -6,10 +6,3 @@ git:
 github:
   enable: true
   repo_name: confluentinc/mds-sdk-go-public
-semaphore:
-  enable: true
-  pipeline_enable: false
-  triggers:
-  - tags
-  - branches
-  branches: []
