@@ -6,3 +6,5 @@ git:
 github:
   enable: true
   repo_name: confluentinc/mds-sdk-go-public
+gitignore:
+  enable: true
