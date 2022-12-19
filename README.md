@@ -8,7 +8,7 @@ This repository holds generated Go SDKs for the MDS API, including v1 MDS for on
 
 ### with access to `metadata-service` repo:
 
-1. Open a PR in `metadata-service` with your changes to the api spec file. This will trigger the Jenkins job to generate v1 MDS SDK in this public repo, compare that to the current version, and open a PR if there's any update.
+1. Open a PR in `metadata-service` with your changes to the API spec file. This will trigger the Jenkins job to generate v1 MDS SDK in this public repo, compare that to the current version, and open a PR if there's any update.
 
 2. Get the PR in `metadata-service` approved and merged. 
 
