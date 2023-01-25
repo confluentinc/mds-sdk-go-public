@@ -34,6 +34,10 @@ cd $ORIGIN_DIR
 go install github.com/travisjeffery/mocker/cmd/mocker@latest
 
 ./generate.sh `pwd`/../openapi-generator-cli.jar ./mdsv1 `pwd`/../metadata-service/rbac-api-server/src/main/resources/WEB-INF/openapi/mds-spec-1_0.yaml
+
+# The OpenAPI generator will override go.mod with vulnerable dependencies. As a short-term solution, do not accept these changes.
+git checkout -- mdsv1/go.mod mdsv1/go.sum
+
 cd $ORIGIN_DIR
 git remote set-url origin git@github.com:confluentinc/mds-sdk-go-public.git
 
