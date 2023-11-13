@@ -16,6 +16,7 @@ api_private_rbacuimy_role_bindings.go
 api_rbac_role_binding_crud.go
 api_rbac_role_binding_summaries.go
 api_rbac_role_definitions.go
+api_sso_device_authorization.go
 api_tokens_and_authentication.go
 client.go
 configuration.go
@@ -42,6 +43,8 @@ docs/AuditLogConfigurationApi.md
 docs/AuthenticationResponse.md
 docs/AuthorizationApi.md
 docs/AuthorizeRequest.md
+docs/CheckDeviceAuthRequest.md
+docs/CheckDeviceAuthResponse.md
 docs/ClusterAccessInfo.md
 docs/ClusterInfo.md
 docs/ClusterRegistryApi.md
@@ -49,8 +52,10 @@ docs/ClusterVisibility.md
 docs/CreateAclRequest.md
 docs/ErrorDetail.md
 docs/ErrorResponse.md
+docs/ExtendAuthResponse.md
 docs/FeaturesInfo.md
 docs/HostInfo.md
+docs/InitDeviceAuthResponse.md
 docs/KafkaACLManagementApi.md
 docs/KafkaResourcePattern.md
 docs/KafkaResourcePatternFilter.md
@@ -75,6 +80,7 @@ docs/RBACRoleDefinitionsApi.md
 docs/ResourcePattern.md
 docs/ResourcesRequest.md
 docs/Role.md
+docs/SSODeviceAuthorizationApi.md
 docs/Scope.md
 docs/ScopeClusters.md
 docs/ScopeRoleBindingMapping.md
@@ -105,14 +111,18 @@ model_audit_log_config_route_category_topics.go
 model_audit_log_config_spec.go
 model_authentication_response.go
 model_authorize_request.go
+model_check_device_auth_request.go
+model_check_device_auth_response.go
 model_cluster_access_info.go
 model_cluster_info.go
 model_cluster_visibility.go
 model_create_acl_request.go
 model_error_detail.go
 model_error_response.go
+model_extend_auth_response.go
 model_features_info.go
 model_host_info.go
+model_init_device_auth_response.go
 model_kafka_resource_pattern.go
 model_kafka_resource_pattern_filter.go
 model_kafka_scope.go

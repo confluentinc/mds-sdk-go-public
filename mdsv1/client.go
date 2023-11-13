@@ -74,6 +74,8 @@ type APIClient struct {
 
 	RBACRoleDefinitionsApi RBACRoleDefinitionsApi
 
+	SSODeviceAuthorizationApi SSODeviceAuthorizationApi
+
 	TokensAndAuthenticationApi TokensAndAuthenticationApi
 }
 
@@ -106,6 +108,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.RBACRoleBindingCRUDApi = (*RBACRoleBindingCRUDApiService)(&c.common)
 	c.RBACRoleBindingSummariesApi = (*RBACRoleBindingSummariesApiService)(&c.common)
 	c.RBACRoleDefinitionsApi = (*RBACRoleDefinitionsApiService)(&c.common)
+	c.SSODeviceAuthorizationApi = (*SSODeviceAuthorizationApiService)(&c.common)
 	c.TokensAndAuthenticationApi = (*TokensAndAuthenticationApiService)(&c.common)
 
 	return c
