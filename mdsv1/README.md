@@ -134,9 +134,6 @@ Class | Method | HTTP request | Description
 *RBACRoleDefinitionsApi* | [**RoleDetail**](docs/RBACRoleDefinitionsApi.md#roledetail) | **Get** /security/1.0/roles/{roleName} | List the resourceType and operations allowed for a given role.
 *RBACRoleDefinitionsApi* | [**Rolenames**](docs/RBACRoleDefinitionsApi.md#rolenames) | **Get** /security/1.0/roleNames | Returns the names of all the roles defined in the system.
 *RBACRoleDefinitionsApi* | [**Roles**](docs/RBACRoleDefinitionsApi.md#roles) | **Get** /security/1.0/roles | Returns all the roles defined in the system.
-*SSODeviceAuthorizationApi* | [**CheckDeviceAuth**](docs/SSODeviceAuthorizationApi.md#checkdeviceauth) | **Post** /security/1.0/oidc/device/check-auth | Provides information about current status of user authentication
-*SSODeviceAuthorizationApi* | [**ExtendDeviceAuth**](docs/SSODeviceAuthorizationApi.md#extenddeviceauth) | **Get** /security/1.0/oidc/device/extend-auth | Extend auth by generating a new token
-*SSODeviceAuthorizationApi* | [**Security10OidcDeviceAuthenticatePost**](docs/SSODeviceAuthorizationApi.md#security10oidcdeviceauthenticatepost) | **Post** /security/1.0/oidc/device/authenticate | Provides user authentication details and device polling for authentication status
 *TokensAndAuthenticationApi* | [**GetToken**](docs/TokensAndAuthenticationApi.md#gettoken) | **Get** /security/1.0/authenticate | Get a bearer token.
 
 
@@ -163,18 +160,14 @@ Class | Method | HTTP request | Description
  - [AuditLogConfigSpec](docs/AuditLogConfigSpec.md)
  - [AuthenticationResponse](docs/AuthenticationResponse.md)
  - [AuthorizeRequest](docs/AuthorizeRequest.md)
- - [CheckDeviceAuthRequest](docs/CheckDeviceAuthRequest.md)
- - [CheckDeviceAuthResponse](docs/CheckDeviceAuthResponse.md)
  - [ClusterAccessInfo](docs/ClusterAccessInfo.md)
  - [ClusterInfo](docs/ClusterInfo.md)
  - [ClusterVisibility](docs/ClusterVisibility.md)
  - [CreateAclRequest](docs/CreateAclRequest.md)
  - [ErrorDetail](docs/ErrorDetail.md)
  - [ErrorResponse](docs/ErrorResponse.md)
- - [ExtendAuthResponse](docs/ExtendAuthResponse.md)
  - [FeaturesInfo](docs/FeaturesInfo.md)
  - [HostInfo](docs/HostInfo.md)
- - [InitDeviceAuthResponse](docs/InitDeviceAuthResponse.md)
  - [KafkaResourcePattern](docs/KafkaResourcePattern.md)
  - [KafkaResourcePatternFilter](docs/KafkaResourcePatternFilter.md)
  - [KafkaScope](docs/KafkaScope.md)
