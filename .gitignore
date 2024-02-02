@@ -194,6 +194,9 @@ flycheck_*.el
 /network-security.data
 
 
+/mk-include/
+/.mk-include-timestamp
+
 # ServiceBot work directory
 .servicebot/*
 
