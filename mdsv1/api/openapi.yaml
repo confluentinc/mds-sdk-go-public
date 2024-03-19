@@ -1779,7 +1779,7 @@ paths:
                     complete: false
                     status: authorization_pending
                     description: The device authorization is pending. Please try again
-                      later
+                      later.
                 slow_down:
                   value:
                     user_code: CRMCWZLK
@@ -1799,7 +1799,7 @@ paths:
                     user_code: CRMCWZLK
                     complete: true
                     status: success
-                    description: authentication successful
+                    description: Authentication successful.
                     auth_token: json web token
                     expires_in: 900
               schema:
@@ -1840,8 +1840,8 @@ paths:
     get:
       description: "Attempts to refresh the Confluent token if applicable, based on\
         \ the provided JwtPrincipal. \n\nIf refresh token is configured to be used,\
-        \ the session is extended till expiry time of new id token requested using\
-        \ the refresh token. \n\nElse session is extended till min(`mex`, `currentTime`+\
+        \ the session is extended until expiry time of new ID token requested using\
+        \ the refresh token.\n\nElse session is extended until min(`mex`, `currentTime`+\
         \ `sessionTokenExpiryConfig`) where `mex` is the claim already present in\
         \ auth token.\n\nThe token cannot be extended beyond value of config `confluent.oidc.session.max.timeout.ms`."
       operationId: extendDeviceAuth
@@ -3271,8 +3271,8 @@ components:
           example: 5
           type: integer
         expires_in:
-          description: The validity of verfication uri in seconds. User must authorize
-            under this time
+          description: The validity of verification URI in seconds. User must authorize
+            within this time
           example: 600
           type: number
       type: object
