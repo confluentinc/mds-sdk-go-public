@@ -19,6 +19,6 @@ type InitDeviceAuthResponse struct {
 	Key string `json:"key,omitempty"`
 	// The interval for polling to check authentication
 	Interval int32 `json:"interval,omitempty"`
-	// The validity of verfication uri in seconds. User must authorize under this time
+	// The validity of verification URI in seconds. User must authorize within this time
 	ExpiresIn float32 `json:"expires_in,omitempty"`
 }

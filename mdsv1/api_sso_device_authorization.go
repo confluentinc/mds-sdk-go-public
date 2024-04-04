@@ -38,7 +38,7 @@ type SSODeviceAuthorizationApi interface {
 	/*
 	 * ExtendDeviceAuth Extend auth by generating a new token
 	 *
-	 * Attempts to refresh the Confluent token if applicable, based on the provided JwtPrincipal.   If refresh token is configured to be used, the session is extended till expiry time of new id token requested using the refresh token.   Else session is extended till min(&#x60;mex&#x60;, &#x60;currentTime&#x60;+ &#x60;sessionTokenExpiryConfig&#x60;) where &#x60;mex&#x60; is the claim already present in auth token.  The token cannot be extended beyond value of config &#x60;confluent.oidc.session.max.timeout.ms&#x60;.
+	 * Attempts to refresh the Confluent token if applicable, based on the provided JwtPrincipal.   If refresh token is configured to be used, the session is extended until expiry time of new ID token requested using the refresh token.  Else session is extended until min(&#x60;mex&#x60;, &#x60;currentTime&#x60;+ &#x60;sessionTokenExpiryConfig&#x60;) where &#x60;mex&#x60; is the claim already present in auth token.  The token cannot be extended beyond value of config &#x60;confluent.oidc.session.max.timeout.ms&#x60;.
 	 *
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	 * @return ExtendAuthResponse
@@ -170,7 +170,7 @@ func (a *SSODeviceAuthorizationApiService) CheckDeviceAuth(ctx _context.Context,
 /*
  * ExtendDeviceAuth Extend auth by generating a new token
  *
- * Attempts to refresh the Confluent token if applicable, based on the provided JwtPrincipal.   If refresh token is configured to be used, the session is extended till expiry time of new id token requested using the refresh token.   Else session is extended till min(&#x60;mex&#x60;, &#x60;currentTime&#x60;+ &#x60;sessionTokenExpiryConfig&#x60;) where &#x60;mex&#x60; is the claim already present in auth token.  The token cannot be extended beyond value of config &#x60;confluent.oidc.session.max.timeout.ms&#x60;.
+ * Attempts to refresh the Confluent token if applicable, based on the provided JwtPrincipal.   If refresh token is configured to be used, the session is extended until expiry time of new ID token requested using the refresh token.  Else session is extended until min(&#x60;mex&#x60;, &#x60;currentTime&#x60;+ &#x60;sessionTokenExpiryConfig&#x60;) where &#x60;mex&#x60; is the claim already present in auth token.  The token cannot be extended beyond value of config &#x60;confluent.oidc.session.max.timeout.ms&#x60;.
  *
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @return ExtendAuthResponse

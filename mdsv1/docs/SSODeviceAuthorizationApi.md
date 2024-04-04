@@ -50,7 +50,7 @@ Name | Type | Description  | Notes
 
 Extend auth by generating a new token
 
-Attempts to refresh the Confluent token if applicable, based on the provided JwtPrincipal.   If refresh token is configured to be used, the session is extended till expiry time of new id token requested using the refresh token.   Else session is extended till min(`mex`, `currentTime`+ `sessionTokenExpiryConfig`) where `mex` is the claim already present in auth token.  The token cannot be extended beyond value of config `confluent.oidc.session.max.timeout.ms`.
+Attempts to refresh the Confluent token if applicable, based on the provided JwtPrincipal.   If refresh token is configured to be used, the session is extended until expiry time of new ID token requested using the refresh token.  Else session is extended until min(`mex`, `currentTime`+ `sessionTokenExpiryConfig`) where `mex` is the claim already present in auth token.  The token cannot be extended beyond value of config `confluent.oidc.session.max.timeout.ms`.
 
 ### Required Parameters
 
