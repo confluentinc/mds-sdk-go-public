@@ -38,12 +38,13 @@ type SSODeviceAuthorizationApi interface {
 	/*
 	 * ExtendDeviceAuth Extend auth by generating a new token
 	 *
-	 * Attempts to refresh the Confluent token if applicable, based on the provided JwtPrincipal.   If refresh token is configured to be used, the session is extended until expiry time of new ID token requested using the refresh token.  Else session is extended until min(&#x60;mex&#x60;, &#x60;currentTime&#x60;+ &#x60;sessionTokenExpiryConfig&#x60;) where &#x60;mex&#x60; is the claim already present in auth token.  The token cannot be extended beyond value of config &#x60;confluent.oidc.session.max.timeout.ms&#x60;.
+	 * Attempts to refresh the Confluent token if applicable, based on the provided JwtPrincipal.   If refresh token is configured to be used, the session is extended until expiry time of new ID token requested using the refresh token.  Else session is extended until min(&#x60;mex&#x60;, &#x60;currentTime&#x60;+ &#x60;sessionTokenExpiryConfig&#x60;) where &#x60;mex&#x60; is the claim already present in auth token.
 	 *
 	 * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	 * @param extendAuthRequest
 	 * @return ExtendAuthResponse
 	 */
-	ExtendDeviceAuth(ctx _context.Context) (ExtendAuthResponse, *_nethttp.Response, error)
+	ExtendDeviceAuth(ctx _context.Context, extendAuthRequest ExtendAuthRequest) (ExtendAuthResponse, *_nethttp.Response, error)
 
 	/*
 	 * Security10OidcDeviceAuthenticatePost Provides user authentication details and device polling for authentication status
@@ -170,14 +171,15 @@ func (a *SSODeviceAuthorizationApiService) CheckDeviceAuth(ctx _context.Context,
 /*
  * ExtendDeviceAuth Extend auth by generating a new token
  *
- * Attempts to refresh the Confluent token if applicable, based on the provided JwtPrincipal.   If refresh token is configured to be used, the session is extended until expiry time of new ID token requested using the refresh token.  Else session is extended until min(&#x60;mex&#x60;, &#x60;currentTime&#x60;+ &#x60;sessionTokenExpiryConfig&#x60;) where &#x60;mex&#x60; is the claim already present in auth token.  The token cannot be extended beyond value of config &#x60;confluent.oidc.session.max.timeout.ms&#x60;.
+ * Attempts to refresh the Confluent token if applicable, based on the provided JwtPrincipal.   If refresh token is configured to be used, the session is extended until expiry time of new ID token requested using the refresh token.  Else session is extended until min(&#x60;mex&#x60;, &#x60;currentTime&#x60;+ &#x60;sessionTokenExpiryConfig&#x60;) where &#x60;mex&#x60; is the claim already present in auth token.
  *
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param extendAuthRequest
  * @return ExtendAuthResponse
  */
-func (a *SSODeviceAuthorizationApiService) ExtendDeviceAuth(ctx _context.Context) (ExtendAuthResponse, *_nethttp.Response, error) {
+func (a *SSODeviceAuthorizationApiService) ExtendDeviceAuth(ctx _context.Context, extendAuthRequest ExtendAuthRequest) (ExtendAuthResponse, *_nethttp.Response, error) {
 	var (
-		localVarHTTPMethod   = _nethttp.MethodGet
+		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
@@ -192,7 +194,7 @@ func (a *SSODeviceAuthorizationApiService) ExtendDeviceAuth(ctx _context.Context
 	localVarFormParams := _neturl.Values{}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
+	localVarHTTPContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -208,6 +210,8 @@ func (a *SSODeviceAuthorizationApiService) ExtendDeviceAuth(ctx _context.Context
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
+	// body params
+	localVarPostBody = &extendAuthRequest
 	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err

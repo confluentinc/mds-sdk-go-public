@@ -9,15 +9,10 @@
 
 package mdsv1
 
-// AuditLogConfigRouteCategories Once the most specific matching route for an event is selected based on the event's associated resource (CRN), it is then matched within that route to exactly one event category rule, based on the category of event, and finally matched within the category rule to a logging destination based on whether the event was \"allowed\" or \"denied\".  Event categories include “authorize“, “management“, “authentication“, “interbroker“, “produce“, “consume“, “heartbeat“, and “describe“.  The “authorize“ category of events are those where the metadata service was asked to check whether the principal was authorized via RBAC to perform an operation on a resource.  The “management“ category of events are those involving Kafka APIs that alter cluster or topic configuration settings, create, delete or modify topics or delegation tokens, initiate shutdown, etc.  The “produce“, “consume“, “interbroker“, “heartbeat“, and “describe“ categories may include a potentially high volume of events. For example, every \"fetch\" request received by a Kafka broker from a Kafka consumer could result in one or more auditable events in the “consume“ category. Consider the possible write load on your audit log destination cluster before enabling audit logging for these categories.  If the matched rule's logging destination is the empty string, the event is discarded.  If the logging destination is “null“, matched events in the “authentication“, “authorize“ and “management“ categories will be routed to the corresponding entry in “default_topics“; but matched events in any other category will be discarded.  Note: the “other“ category is deprecated and will be removed in a future version.
-type AuditLogConfigRouteCategories struct {
-	Other          *AuditLogConfigRouteCategoryTopics `json:"other,omitempty"`
-	Authentication *AuditLogConfigRouteCategoryTopics `json:"authentication,omitempty"`
-	Authorize      *AuditLogConfigRouteCategoryTopics `json:"authorize,omitempty"`
-	Management     *AuditLogConfigRouteCategoryTopics `json:"management,omitempty"`
-	Produce        *AuditLogConfigRouteCategoryTopics `json:"produce,omitempty"`
-	Consume        *AuditLogConfigRouteCategoryTopics `json:"consume,omitempty"`
-	Interbroker    *AuditLogConfigRouteCategoryTopics `json:"interbroker,omitempty"`
-	Heartbeat      *AuditLogConfigRouteCategoryTopics `json:"heartbeat,omitempty"`
-	Describe       *AuditLogConfigRouteCategoryTopics `json:"describe,omitempty"`
+// ExtendAuthRequest struct for ExtendAuthRequest
+type ExtendAuthRequest struct {
+	// The auth token received from the device authentication
+	AccessToken string `json:"access_token,omitempty"`
+	// The encrypted refresh token
+	RefreshToken string `json:"refresh_token,omitempty"`
 }

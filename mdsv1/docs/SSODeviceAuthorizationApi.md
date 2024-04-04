@@ -5,7 +5,7 @@ All URIs are relative to *http://localhost*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**CheckDeviceAuth**](SSODeviceAuthorizationApi.md#CheckDeviceAuth) | **Post** /security/1.0/oidc/device/check-auth | Provides information about current status of user authentication
-[**ExtendDeviceAuth**](SSODeviceAuthorizationApi.md#ExtendDeviceAuth) | **Get** /security/1.0/oidc/device/extend-auth | Extend auth by generating a new token
+[**ExtendDeviceAuth**](SSODeviceAuthorizationApi.md#ExtendDeviceAuth) | **Post** /security/1.0/oidc/device/extend-auth | Extend auth by generating a new token
 [**Security10OidcDeviceAuthenticatePost**](SSODeviceAuthorizationApi.md#Security10OidcDeviceAuthenticatePost) | **Post** /security/1.0/oidc/device/authenticate | Provides user authentication details and device polling for authentication status
 
 
@@ -46,15 +46,19 @@ Name | Type | Description  | Notes
 
 ## ExtendDeviceAuth
 
-> ExtendAuthResponse ExtendDeviceAuth(ctx, )
+> ExtendAuthResponse ExtendDeviceAuth(ctx, extendAuthRequest)
 
 Extend auth by generating a new token
 
-Attempts to refresh the Confluent token if applicable, based on the provided JwtPrincipal.   If refresh token is configured to be used, the session is extended until expiry time of new ID token requested using the refresh token.  Else session is extended until min(`mex`, `currentTime`+ `sessionTokenExpiryConfig`) where `mex` is the claim already present in auth token.  The token cannot be extended beyond value of config `confluent.oidc.session.max.timeout.ms`.
+Attempts to refresh the Confluent token if applicable, based on the provided JwtPrincipal.   If refresh token is configured to be used, the session is extended until expiry time of new ID token requested using the refresh token.  Else session is extended until min(`mex`, `currentTime`+ `sessionTokenExpiryConfig`) where `mex` is the claim already present in auth token.
 
 ### Required Parameters
 
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
+**extendAuthRequest** | [**ExtendAuthRequest**](ExtendAuthRequest.md)|  | 
 
 ### Return type
 
@@ -62,11 +66,11 @@ This endpoint does not need any parameter.
 
 ### Authorization
 
-[bearerAuth](../README.md#bearerAuth)
+[basicAuth](../README.md#basicAuth), [bearerAuth](../README.md#bearerAuth)
 
 ### HTTP request headers
 
-- **Content-Type**: Not defined
+- **Content-Type**: application/json
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)

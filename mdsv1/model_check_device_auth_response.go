@@ -23,6 +23,8 @@ type CheckDeviceAuthResponse struct {
 	Description string `json:"description,omitempty"`
 	// The authentication token, if available
 	AuthToken string `json:"auth_token,omitempty"`
+	// The encrypted refresh token, if available
+	RefreshToken string `json:"refresh_token,omitempty"`
 	// The duration (in seconds) for which the token is valid
 	ExpiresIn int32 `json:"expires_in,omitempty"`
 }

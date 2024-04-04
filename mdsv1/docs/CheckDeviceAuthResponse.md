@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **Status** | **string** | The status of the authentication process | [optional] 
 **Description** | **string** | A description of the error or status | [optional] 
 **AuthToken** | **string** | The authentication token, if available | [optional] 
+**RefreshToken** | **string** | The encrypted refresh token, if available | [optional] 
 **ExpiresIn** | **int32** | The duration (in seconds) for which the token is valid | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
