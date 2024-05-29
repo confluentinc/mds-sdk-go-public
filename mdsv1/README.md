@@ -135,7 +135,7 @@ Class | Method | HTTP request | Description
 *RBACRoleDefinitionsApi* | [**Rolenames**](docs/RBACRoleDefinitionsApi.md#rolenames) | **Get** /security/1.0/roleNames | Returns the names of all the roles defined in the system.
 *RBACRoleDefinitionsApi* | [**Roles**](docs/RBACRoleDefinitionsApi.md#roles) | **Get** /security/1.0/roles | Returns all the roles defined in the system.
 *SSODeviceAuthorizationApi* | [**CheckDeviceAuth**](docs/SSODeviceAuthorizationApi.md#checkdeviceauth) | **Post** /security/1.0/oidc/device/check-auth | Provides information about current status of user authentication
-*SSODeviceAuthorizationApi* | [**ExtendDeviceAuth**](docs/SSODeviceAuthorizationApi.md#extenddeviceauth) | **Get** /security/1.0/oidc/device/extend-auth | Extend auth by generating a new token
+*SSODeviceAuthorizationApi* | [**ExtendDeviceAuth**](docs/SSODeviceAuthorizationApi.md#extenddeviceauth) | **Post** /security/1.0/oidc/device/extend-auth | Extend auth by generating a new token
 *SSODeviceAuthorizationApi* | [**Security10OidcDeviceAuthenticatePost**](docs/SSODeviceAuthorizationApi.md#security10oidcdeviceauthenticatepost) | **Post** /security/1.0/oidc/device/authenticate | Provides user authentication details and device polling for authentication status
 *TokensAndAuthenticationApi* | [**GetToken**](docs/TokensAndAuthenticationApi.md#gettoken) | **Get** /security/1.0/authenticate | Get a bearer token.
 
@@ -171,6 +171,7 @@ Class | Method | HTTP request | Description
  - [CreateAclRequest](docs/CreateAclRequest.md)
  - [ErrorDetail](docs/ErrorDetail.md)
  - [ErrorResponse](docs/ErrorResponse.md)
+ - [ExtendAuthRequest](docs/ExtendAuthRequest.md)
  - [ExtendAuthResponse](docs/ExtendAuthResponse.md)
  - [FeaturesInfo](docs/FeaturesInfo.md)
  - [HostInfo](docs/HostInfo.md)
