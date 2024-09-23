@@ -11,8 +11,10 @@ package mdsv1
 
 // ScopeClusters struct for ScopeClusters
 type ScopeClusters struct {
-	KafkaCluster          string `json:"kafka-cluster"`
+	KafkaCluster          string `json:"kafka-cluster,omitempty"`
 	ConnectCluster        string `json:"connect-cluster,omitempty"`
 	KsqlCluster           string `json:"ksql-cluster,omitempty"`
 	SchemaRegistryCluster string `json:"schema-registry-cluster,omitempty"`
+	Cmf                   string `json:"cmf,omitempty"`
+	FlinkEnvironment      string `json:"flink-environment,omitempty"`
 }

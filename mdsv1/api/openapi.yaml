@@ -2479,7 +2479,9 @@ components:
             clusters:
               kafka-cluster: kafkaClusterId
               schema-registry-cluster: schemaRegistryClusterId
+              flink-environment: flinkEnvironmentId
               ksql-cluster: ksqlClusterId
+              cmf: cmfId
               connect-cluster: connectClusterId
           resourceName: clicksTopic1
           operation: Read
@@ -2488,7 +2490,9 @@ components:
             clusters:
               kafka-cluster: kafkaClusterId
               schema-registry-cluster: schemaRegistryClusterId
+              flink-environment: flinkEnvironmentId
               ksql-cluster: ksqlClusterId
+              cmf: cmfId
               connect-cluster: connectClusterId
           resourceName: clicksTopic1
           operation: Read
@@ -2522,7 +2526,9 @@ components:
           clusters:
             kafka-cluster: kafkaClusterId
             schema-registry-cluster: schemaRegistryClusterId
+            flink-environment: flinkEnvironmentId
             ksql-cluster: ksqlClusterId
+            cmf: cmfId
             connect-cluster: connectClusterId
       properties:
         scope:
@@ -2635,7 +2641,9 @@ components:
           clusters:
             kafka-cluster: kafkaClusterId
             schema-registry-cluster: schemaRegistryClusterId
+            flink-environment: flinkEnvironmentId
             ksql-cluster: ksqlClusterId
+            cmf: cmfId
             connect-cluster: connectClusterId
         rolebindings:
           key:
@@ -2728,7 +2736,9 @@ components:
           clusters:
             kafka-cluster: kafkaClusterId
             schema-registry-cluster: schemaRegistryClusterId
+            flink-environment: flinkEnvironmentId
             ksql-cluster: ksqlClusterId
+            cmf: cmfId
             connect-cluster: connectClusterId
       properties:
         clusterName:
@@ -2774,7 +2784,9 @@ components:
           clusters:
             kafka-cluster: kafkaClusterId
             schema-registry-cluster: schemaRegistryClusterId
+            flink-environment: flinkEnvironmentId
             ksql-cluster: ksqlClusterId
+            cmf: cmfId
             connect-cluster: connectClusterId
         cluster_role_bindings:
           key:
@@ -2831,7 +2843,9 @@ components:
           clusters:
             kafka-cluster: kafkaClusterId
             schema-registry-cluster: schemaRegistryClusterId
+            flink-environment: flinkEnvironmentId
             ksql-cluster: ksqlClusterId
+            cmf: cmfId
             connect-cluster: connectClusterId
         resourceName: clicksTopic1
         operation: Read
@@ -2859,7 +2873,9 @@ components:
         clusters:
           kafka-cluster: kafkaClusterId
           schema-registry-cluster: schemaRegistryClusterId
+          flink-environment: flinkEnvironmentId
           ksql-cluster: ksqlClusterId
+          cmf: cmfId
           connect-cluster: connectClusterId
       properties:
         clusters:
@@ -2873,14 +2889,16 @@ components:
         clusters:
           kafka-cluster: kafkaClusterId
           schema-registry-cluster: schemaRegistryClusterId
+          flink-environment: flinkEnvironmentId
           ksql-cluster: ksqlClusterId
+          cmf: cmfId
           connect-cluster: connectClusterId
       properties:
         clusterName:
           example: StagingCluster
           type: string
         clusters:
-          $ref: '#/components/schemas/MdsScope_clusters'
+          $ref: '#/components/schemas/Scope_clusters'
       type: object
     AccessPolicy:
       example:
@@ -3360,7 +3378,9 @@ components:
       example:
         kafka-cluster: kafkaClusterId
         schema-registry-cluster: schemaRegistryClusterId
+        flink-environment: flinkEnvironmentId
         ksql-cluster: ksqlClusterId
+        cmf: cmfId
         connect-cluster: connectClusterId
       properties:
         kafka-cluster:
@@ -3375,27 +3395,11 @@ components:
         schema-registry-cluster:
           example: schemaRegistryClusterId
           type: string
-      required:
-      - kafka-cluster
-      type: object
-    MdsScope_clusters:
-      example:
-        kafka-cluster: kafkaClusterId
-        schema-registry-cluster: schemaRegistryClusterId
-        ksql-cluster: ksqlClusterId
-        connect-cluster: connectClusterId
-      properties:
-        kafka-cluster:
-          example: kafkaClusterId
+        cmf:
+          example: cmfId
           type: string
-        connect-cluster:
-          example: connectClusterId
-          type: string
-        ksql-cluster:
-          example: ksqlClusterId
-          type: string
-        schema-registry-cluster:
-          example: schemaRegistryClusterId
+        flink-environment:
+          example: flinkEnvironmentId
           type: string
       type: object
     KafkaScope_clusters:
