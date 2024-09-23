@@ -65,7 +65,6 @@ docs/KafkaScopeClusters.md
 docs/ManagedResourceBinding.md
 docs/ManagedRoleBindings.md
 docs/MdsScope.md
-docs/MdsScopeClusters.md
 docs/MetadataServiceOperationsApi.md
 docs/Operation.md
 docs/PatternType.md
@@ -132,7 +131,6 @@ model_kafka_scope_clusters.go
 model_managed_resource_binding.go
 model_managed_role_bindings.go
 model_mds_scope.go
-model_mds_scope_clusters.go
 model_operation.go
 model_pattern_type.go
 model_protocol.go

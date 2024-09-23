@@ -183,7 +183,6 @@ Class | Method | HTTP request | Description
  - [ManagedResourceBinding](docs/ManagedResourceBinding.md)
  - [ManagedRoleBindings](docs/ManagedRoleBindings.md)
  - [MdsScope](docs/MdsScope.md)
- - [MdsScopeClusters](docs/MdsScopeClusters.md)
  - [Operation](docs/Operation.md)
  - [PatternType](docs/PatternType.md)
  - [Protocol](docs/Protocol.md)

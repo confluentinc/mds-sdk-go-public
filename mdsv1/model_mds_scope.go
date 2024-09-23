@@ -11,6 +11,6 @@ package mdsv1
 
 // MdsScope struct for MdsScope
 type MdsScope struct {
-	ClusterName string           `json:"clusterName,omitempty"`
-	Clusters    MdsScopeClusters `json:"clusters,omitempty"`
+	ClusterName string        `json:"clusterName,omitempty"`
+	Clusters    ScopeClusters `json:"clusters,omitempty"`
 }
