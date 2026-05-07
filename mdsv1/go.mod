@@ -1,10 +1,10 @@
 module github.com/confluentinc/mds-sdk-go-public/mdsv1
 
-go 1.23.0
+go 1.25.0
 
 require (
 	github.com/antihax/optional v1.0.0
-	golang.org/x/oauth2 v0.27.0
+	golang.org/x/oauth2 v0.36.0
 )
 
 require (
